@@ -8,9 +8,43 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, Star, Clock } from 'lucide-react-native';
+import { User, Star, Clock, Car } from 'lucide-react-native';
+import { useState } from 'react';
 
-const luxuryCars = [
+const ecoCarData = [
+  {
+    id: 1,
+    name: 'BMW 3 Series',
+    model: '320d Sedan',
+    price: '€120',
+    image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: false,
+    rating: 4.5,
+    features: ['GPS', 'Bluetooth', 'AC'],
+  },
+  {
+    id: 2,
+    name: 'Audi A4',
+    model: 'Avant Quattro',
+    price: '€140',
+    image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: false,
+    rating: 4.6,
+    features: ['Navigation', 'Heated Seats', 'Parking Assist'],
+  },
+  {
+    id: 3,
+    name: 'Mercedes C-Class',
+    model: 'C200 AMG Line',
+    price: '€160',
+    image: 'https://images.pexels.com/photos/3972755/pexels-photo-3972755.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: false,
+    rating: 4.7,
+    features: ['Premium Sound', 'LED Lights', 'Cruise Control'],
+  },
+];
+
+const premiumCarData = [
   {
     id: 1,
     name: 'Mercedes S-Class',
@@ -54,6 +88,10 @@ const luxuryCars = [
 ];
 
 export default function CarsScreen() {
+  const [selectedCategory, setSelectedCategory] = useState<'eco' | 'premium'>('premium');
+  
+  const currentCarData = selectedCategory === 'eco' ? ecoCarData : premiumCarData;
+
   const CarCard = ({ car }: { car: any }) => (
     <View style={styles.carCard}>
       <Image source={{ uri: car.image }} style={styles.carImage} />
@@ -83,10 +121,12 @@ export default function CarsScreen() {
             <Text style={styles.priceUnit}>/day</Text>
           </View>
           
-          <View style={styles.chauffeurBadge}>
-            <User size={12} color="#FFD700" />
-            <Text style={styles.chauffeurText}>Chauffeur</Text>
-          </View>
+          {car.chauffeur && (
+            <View style={styles.chauffeurBadge}>
+              <User size={12} color="#FFD700" />
+              <Text style={styles.chauffeurText}>Chauffeur</Text>
+            </View>
+          )}
         </View>
         
         <TouchableOpacity style={styles.bookButton}>
@@ -99,12 +139,46 @@ export default function CarsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Premium Car Rentals</Text>
-        <Text style={styles.headerSubtitle}>Luxury vehicles with professional chauffeurs</Text>
+        <Text style={styles.headerTitle}>Car Rentals</Text>
+        <Text style={styles.headerSubtitle}>Choose from eco-friendly or premium vehicles</Text>
+      </View>
+
+      <View style={styles.categoryContainer}>
+        <TouchableOpacity 
+          style={[
+            styles.categoryButton,
+            selectedCategory === 'eco' && styles.activeCategoryButton
+          ]}
+          onPress={() => setSelectedCategory('eco')}
+        >
+          <Car size={16} color={selectedCategory === 'eco' ? '#111111' : '#CCCCCC'} />
+          <Text style={[
+            styles.categoryButtonText,
+            selectedCategory === 'eco' && styles.activeCategoryButtonText
+          ]}>
+            Eco Cars
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[
+            styles.categoryButton,
+            selectedCategory === 'premium' && styles.activeCategoryButton
+          ]}
+          onPress={() => setSelectedCategory('premium')}
+        >
+          <Star size={16} color={selectedCategory === 'premium' ? '#111111' : '#CCCCCC'} />
+          <Text style={[
+            styles.categoryButtonText,
+            selectedCategory === 'premium' && styles.activeCategoryButtonText
+          ]}>
+            Premium Cars
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-        {luxuryCars.map((car) => (
+        {currentCarData.map((car) => (
           <CarCard key={car.id} car={car} />
         ))}
       </ScrollView>
@@ -133,6 +207,35 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
     marginTop: 5,
     fontFamily: 'Inter',
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 8,
+    padding: 4,
+  },
+  categoryButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 6,
+  },
+  activeCategoryButton: {
+    backgroundColor: '#FFD700',
+  },
+  categoryButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#CCCCCC',
+    marginLeft: 6,
+    fontFamily: 'Inter',
+  },
+  activeCategoryButtonText: {
+    color: '#111111',
   },
   scrollView: {
     flex: 1,
