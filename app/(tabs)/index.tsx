@@ -17,9 +17,8 @@ import { useState } from 'react';
 const { width } = Dimensions.get('window');
 
 const popularCities = [
-  'Paris', 'London', 'Rome', 'Barcelona', 'Amsterdam',
-  'Vienna', 'Monaco', 'Cannes', 'Milan', 'Zurich',
-  'Courchevel', 'Megève'
+  'Paris', 'Londres', 'Genève', 'Megève', 'Courchevel',
+  'Nice', 'Cannes', 'Istanbul'
 ];
 const featuredDeals = [
   {
