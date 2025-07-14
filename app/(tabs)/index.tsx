@@ -13,6 +13,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Car, Hotel, MapPin, ChevronRight, Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { ToggleButtons } from '../components/ToggleButtons';
 
 const { width } = Dimensions.get('window');
 
@@ -49,42 +52,60 @@ const featuredDeals = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const { t, isRTL } = useLanguage();
   const [selectedCity, setSelectedCity] = useState('Paris');
   const [showCityDropdown, setShowCityDropdown] = useState(false);
 
   const CategoryButton = ({ icon, title, route }: { icon: any, title: string, route: string }) => (
     <TouchableOpacity 
-      style={styles.categoryButton}
+      style={[
+        styles.categoryButton,
+        { 
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+        }
+      ]}
       onPress={() => router.push(route)}
     >
-      <View style={styles.iconContainer}>
+      <View style={[styles.iconContainer, { backgroundColor: theme.colors.background }]}>
         {icon}
       </View>
-      <Text style={styles.categoryText}>{title}</Text>
+      <Text style={[styles.categoryText, { color: theme.colors.text }]}>{title}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        style={{ writingDirection: isRTL ? 'rtl' : 'ltr' }}
+      >
+        {/* Toggle Buttons */}
+        <ToggleButtons />
+        
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.welcomeText}>Welcome to {selectedCity}, Sultan</Text>
-          <Text style={styles.subText}>Discover premium experiences</Text>
+          <Text style={[styles.welcomeText, { color: theme.colors.text }]}>
+            {t('welcomeBack')}
+          </Text>
+          <Text style={[styles.subText, { color: theme.colors.textSecondary }]}>
+            {t('whereToNext')}
+          </Text>
         </View>
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Search size={20} color="#CCCCCC" />
+          <View style={[styles.searchBar, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <Search size={20} color={theme.colors.textSecondary} />
             <TouchableOpacity 
               style={styles.citySelector}
               onPress={() => setShowCityDropdown(!showCityDropdown)}
             >
-              <Text style={styles.cityText}>{selectedCity}</Text>
+              <Text style={[styles.cityText, { color: theme.colors.text }]}>{selectedCity}</Text>
               <ChevronRight 
                 size={16} 
-                color="#FFD700" 
+                color={theme.colors.primary} 
                 style={{ 
                   transform: [{ rotate: showCityDropdown ? '90deg' : '0deg' }] 
                 }} 
@@ -93,7 +114,7 @@ export default function HomeScreen() {
           </View>
           
           {showCityDropdown && (
-            <View style={styles.cityDropdown}>
+            <View style={[styles.cityDropdown, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
               <ScrollView style={styles.cityList} nestedScrollEnabled>
                 {popularCities.map((city) => (
                   <TouchableOpacity
@@ -109,7 +130,11 @@ export default function HomeScreen() {
                   >
                     <Text style={[
                       styles.cityOptionText,
-                      selectedCity === city && styles.selectedCityOptionText
+                      { color: theme.colors.text },
+                      selectedCity === city && [
+                        styles.selectedCityOptionText,
+                        { color: theme.colors.primary }
+                      ]
                     ]}>
                       {city}
                     </Text>
@@ -121,7 +146,7 @@ export default function HomeScreen() {
         </View>
         {/* Featured Deals Carousel */}
         <View style={styles.carouselContainer}>
-          <Text style={styles.sectionTitle}>Featured Premium Deals</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('featuredDeals')}</Text>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
@@ -135,12 +160,12 @@ export default function HomeScreen() {
                   style={styles.gradient}
                 />
                 <View style={styles.dealContent}>
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{deal.badge}</Text>
+                  <View style={[styles.badge, { backgroundColor: theme.colors.primary }]}>
+                    <Text style={[styles.badgeText, { color: theme.colors.background }]}>{deal.badge}</Text>
                   </View>
-                  <Text style={styles.dealTitle}>{deal.title}</Text>
-                  <Text style={styles.dealSubtitle}>{deal.subtitle}</Text>
-                  <Text style={styles.dealPrice}>{deal.price}</Text>
+                  <Text style={[styles.dealTitle, { color: '#FFFFFF' }]}>{deal.title}</Text>
+                  <Text style={[styles.dealSubtitle, { color: '#CCCCCC' }]}>{deal.subtitle}</Text>
+                  <Text style={[styles.dealPrice, { color: theme.colors.primary }]}>{deal.price}</Text>
                 </View>
               </View>
             ))}
@@ -149,30 +174,32 @@ export default function HomeScreen() {
 
         {/* Categories */}
         <View style={styles.categoriesContainer}>
-          <Text style={styles.sectionTitle}>Book Your Premium Experience</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            {t('popularCities')}
+          </Text>
           <View style={styles.categoriesGrid}>
             <CategoryButton 
-              icon={<Car size={24} color="#FFD700" />}
-              title="Car Rentals"
+              icon={<Car size={24} color={theme.colors.primary} />}
+              title={t('carRentals')}
               route="/cars"
             />
             <CategoryButton 
-              icon={<Hotel size={24} color="#FFD700" />}
-              title="Hotels"
+              icon={<Hotel size={24} color={theme.colors.primary} />}
+              title={t('hotels')}
               route="/hotels"
             />
             <CategoryButton 
-              icon={<MapPin size={24} color="#FFD700" />}
-              title="Experiences"
+              icon={<MapPin size={24} color={theme.colors.primary} />}
+              title={t('experiences')}
               route="/experiences"
             />
           </View>
         </View>
 
         {/* View All Button */}
-        <TouchableOpacity style={styles.viewAllButton}>
-          <Text style={styles.viewAllText}>View All Offers</Text>
-          <ChevronRight size={20} color="#111111" />
+        <TouchableOpacity style={[styles.viewAllButton, { backgroundColor: theme.colors.primary }]}>
+          <Text style={[styles.viewAllText, { color: theme.colors.background }]}>{t('viewAll')}</Text>
+          <ChevronRight size={20} color={theme.colors.background} />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -182,7 +209,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111111',
   },
   header: {
     padding: 20,
@@ -191,12 +217,10 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#FFFFFF',
     fontFamily: 'Inter',
   },
   subText: {
     fontSize: 16,
-    color: '#CCCCCC',
     marginTop: 5,
     fontFamily: 'Inter',
   },
@@ -209,12 +233,10 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#333333',
   },
   citySelector: {
     flexDirection: 'row',
@@ -224,7 +246,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cityText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'Inter',
@@ -234,10 +255,8 @@ const styles = StyleSheet.create({
     top: 60,
     left: 20,
     right: 20,
-    backgroundColor: '#1A1A1A',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333333',
     maxHeight: 300,
     zIndex: 1001,
     elevation: 1001,
@@ -250,15 +269,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   selectedCityOption: {
-    backgroundColor: '#222222',
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
   },
   cityOptionText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontFamily: 'Inter',
   },
   selectedCityOptionText: {
-    color: '#FFD700',
     fontWeight: '600',
   },
   carouselContainer: {
@@ -267,7 +284,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
     marginLeft: 20,
     marginBottom: 15,
     fontFamily: 'Inter',
@@ -302,7 +318,6 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   badge: {
-    backgroundColor: '#FFD700',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -310,7 +325,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeText: {
-    color: '#111111',
     fontSize: 10,
     fontWeight: '700',
     fontFamily: 'Inter',
@@ -318,19 +332,16 @@ const styles = StyleSheet.create({
   dealTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
     fontFamily: 'Inter',
   },
   dealSubtitle: {
     fontSize: 12,
-    color: '#CCCCCC',
     marginTop: 2,
     fontFamily: 'Inter',
   },
   dealPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFD700',
     marginTop: 5,
     fontFamily: 'Inter',
   },
@@ -346,24 +357,20 @@ const styles = StyleSheet.create({
   categoryButton: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
     marginHorizontal: 5,
     paddingVertical: 20,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333333',
   },
   iconContainer: {
     width: 50,
     height: 50,
-    backgroundColor: '#222222',
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
   },
   categoryText: {
-    color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
@@ -373,7 +380,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFD700',
     marginHorizontal: 20,
     marginTop: 30,
     marginBottom: 20,
@@ -381,7 +387,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   viewAllText: {
-    color: '#111111',
     fontSize: 16,
     fontWeight: '700',
     marginRight: 5,
