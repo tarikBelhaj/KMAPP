@@ -44,7 +44,7 @@ const ecoCarData = [
   },
 ];
 
-const premiumCarData = [
+const luxuryCarData = [
   {
     id: 1,
     name: 'Mercedes S-Class',
@@ -111,11 +111,16 @@ const chauffeurCarData = [
 ];
 
 export default function CarsScreen() {
-  const [selectedCategory, setSelectedCategory] = useState<'eco' | 'premium' | 'chauffeur'>('premium');
+  const [selectedCategory, setSelectedCategory] = useState<'eco' | 'premium'>('premium');
+  const [selectedPremiumSubCategory, setSelectedPremiumSubCategory] = useState<'luxury' | 'chauffeur'>('luxury');
   
-  const currentCarData = selectedCategory === 'eco' ? ecoCarData : 
-                        selectedCategory === 'premium' ? premiumCarData : 
-                        chauffeurCarData;
+  const getCurrentCarData = () => {
+    if (selectedCategory === 'eco') {
+      return ecoCarData;
+    } else {
+      return selectedPremiumSubCategory === 'luxury' ? luxuryCarData : chauffeurCarData;
+    }
+  };
 
   const CarCard = ({ car }: { car: any }) => (
     <View style={styles.carCard}>
@@ -165,15 +170,11 @@ export default function CarsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Car Rentals</Text>
-        <Text style={styles.headerSubtitle}>Choose from eco-friendly, premium or chauffeur vehicles</Text>
+        <Text style={styles.headerSubtitle}>Choose from eco-friendly or premium vehicles</Text>
       </View>
 
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
-        style={styles.categoryScrollContainer}
-        contentContainerStyle={styles.categoryContainer}
-      >
+      {/* Catégories principales */}
+      <View style={styles.categoryContainer}>
         <TouchableOpacity 
           style={[
             styles.categoryButton,
@@ -205,26 +206,47 @@ export default function CarsScreen() {
             Premium Cars
           </Text>
         </TouchableOpacity>
+      </View>
 
-        <TouchableOpacity 
-          style={[
-            styles.categoryButton,
-            selectedCategory === 'chauffeur' && styles.activeCategoryButton
-          ]}
-          onPress={() => setSelectedCategory('chauffeur')}
-        >
-          <User size={16} color={selectedCategory === 'chauffeur' ? '#111111' : '#CCCCCC'} />
-          <Text style={[
-            styles.categoryButtonText,
-            selectedCategory === 'chauffeur' && styles.activeCategoryButtonText
-          ]}>
-            Avec Chauffeur
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+      {/* Sous-catégories Premium */}
+      {selectedCategory === 'premium' && (
+        <View style={styles.subCategoryContainer}>
+          <TouchableOpacity 
+            style={[
+              styles.subCategoryButton,
+              selectedPremiumSubCategory === 'luxury' && styles.activeSubCategoryButton
+            ]}
+            onPress={() => setSelectedPremiumSubCategory('luxury')}
+          >
+            <Star size={14} color={selectedPremiumSubCategory === 'luxury' ? '#111111' : '#999999'} />
+            <Text style={[
+              styles.subCategoryButtonText,
+              selectedPremiumSubCategory === 'luxury' && styles.activeSubCategoryButtonText
+            ]}>
+              Luxury Cars
+            </Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[
+              styles.subCategoryButton,
+              selectedPremiumSubCategory === 'chauffeur' && styles.activeSubCategoryButton
+            ]}
+            onPress={() => setSelectedPremiumSubCategory('chauffeur')}
+          >
+            <User size={14} color={selectedPremiumSubCategory === 'chauffeur' ? '#111111' : '#999999'} />
+            <Text style={[
+              styles.subCategoryButtonText,
+              selectedPremiumSubCategory === 'chauffeur' && styles.activeSubCategoryButtonText
+            ]}>
+              Avec Chauffeur
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-        {currentCarData.map((car) => (
+        {getCurrentCarData().map((car) => (
           <CarCard key={car.id} car={car} />
         ))}
       </ScrollView>
@@ -254,25 +276,21 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontFamily: 'Inter',
   },
-  categoryScrollContainer: {
-    marginBottom: 20,
-  },
   categoryContainer: {
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginBottom: 15,
     backgroundColor: '#1A1A1A',
     borderRadius: 8,
     padding: 4,
-    marginHorizontal: 20,
   },
   categoryButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
     borderRadius: 6,
-    marginRight: 8,
-    minWidth: 120,
   },
   activeCategoryButton: {
     backgroundColor: '#FFD700',
@@ -285,6 +303,35 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
   },
   activeCategoryButtonText: {
+    color: '#111111',
+  },
+  subCategoryContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    backgroundColor: '#222222',
+    borderRadius: 6,
+    padding: 3,
+  },
+  subCategoryButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 4,
+  },
+  activeSubCategoryButton: {
+    backgroundColor: '#FFD700',
+  },
+  subCategoryButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#999999',
+    marginLeft: 4,
+    fontFamily: 'Inter',
+  },
+  activeSubCategoryButtonText: {
     color: '#111111',
   },
   scrollView: {
