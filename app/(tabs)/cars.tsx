@@ -49,48 +49,113 @@ const premiumCarData = [
     id: 1,
     name: 'Mercedes S-Class',
     model: 'S 580 4MATIC',
-    price: '€650',
+    price: '€450',
     image: 'https://images.pexels.com/photos/3972755/pexels-photo-3972755.jpeg?auto=compress&cs=tinysrgb&w=800',
-    chauffeur: true,
+    chauffeur: false,
     rating: 4.9,
-    features: ['WiFi', 'Champagne', 'Airport Pickup'],
+    features: ['WiFi', 'Premium Sound', 'Massage Seats'],
   },
   {
     id: 2,
     name: 'Bentley Continental GT',
     model: 'V8 Convertible',
-    price: '€850',
+    price: '€650',
     image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=800',
-    chauffeur: true,
+    chauffeur: false,
     rating: 5.0,
-    features: ['Premium Sound', 'Massage Seats', 'Concierge'],
+    features: ['Premium Sound', 'Massage Seats', 'Navigation'],
   },
   {
     id: 3,
     name: 'Rolls-Royce Phantom',
     model: 'Extended Wheelbase',
-    price: '€1,200',
+    price: '€800',
     image: 'https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg?auto=compress&cs=tinysrgb&w=800',
-    chauffeur: true,
+    chauffeur: false,
     rating: 5.0,
-    features: ['Starlight Headliner', 'Champagne Bar', 'Privacy Glass'],
+    features: ['Starlight Headliner', 'Premium Audio', 'Privacy Glass'],
   },
   {
     id: 4,
     name: 'BMW 7 Series',
     model: '750Li xDrive',
-    price: '€550',
+    price: '€380',
     image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800',
-    chauffeur: true,
+    chauffeur: false,
     rating: 4.8,
     features: ['Executive Lounge', 'Gesture Control', 'Fragrance'],
   },
 ];
 
+const chauffeurCarData = [
+  {
+    id: 1,
+    name: 'Mercedes S-Class',
+    model: 'S 580 4MATIC + Chauffeur',
+    price: '€650',
+    image: 'https://images.pexels.com/photos/3972755/pexels-photo-3972755.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: true,
+    rating: 4.9,
+    features: ['Chauffeur Professionnel', 'WiFi', 'Champagne', 'Airport Pickup'],
+  },
+  {
+    id: 2,
+    name: 'Bentley Continental GT',
+    model: 'V8 Convertible + Chauffeur',
+    price: '€850',
+    image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: true,
+    rating: 5.0,
+    features: ['Chauffeur VIP', 'Premium Sound', 'Massage Seats', 'Concierge'],
+  },
+  {
+    id: 3,
+    name: 'Rolls-Royce Phantom',
+    model: 'Extended Wheelbase + Chauffeur',
+    price: '€1,200',
+    image: 'https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: true,
+    rating: 5.0,
+    features: ['Chauffeur de Luxe', 'Starlight Headliner', 'Champagne Bar', 'Privacy Glass'],
+  },
+  {
+    id: 4,
+    name: 'BMW 7 Series',
+    model: '750Li xDrive + Chauffeur',
+    price: '€550',
+    image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: true,
+    rating: 4.8,
+    features: ['Chauffeur Expérimenté', 'Executive Lounge', 'Gesture Control', 'Fragrance'],
+  },
+  {
+    id: 5,
+    name: 'Maybach S-Class',
+    model: 'S 680 + Chauffeur',
+    price: '€900',
+    image: 'https://images.pexels.com/photos/3972755/pexels-photo-3972755.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: true,
+    rating: 5.0,
+    features: ['Chauffeur Premium', 'Executive Rear Seats', 'Champagne Cooler', 'Massage Function'],
+  },
+  {
+    id: 6,
+    name: 'Audi A8 L',
+    model: 'W12 + Chauffeur',
+    price: '€480',
+    image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=800',
+    chauffeur: true,
+    rating: 4.7,
+    features: ['Chauffeur Qualifié', 'Matrix LED', 'Bang & Olufsen', 'Climate Control'],
+  },
+];
+
 export default function CarsScreen() {
-  const [selectedCategory, setSelectedCategory] = useState<'eco' | 'premium'>('premium');
+  const [selectedCategory, setSelectedCategory] = useState<'eco' | 'premium' | 'chauffeur'>('premium');
   
-  const currentCarData = selectedCategory === 'eco' ? ecoCarData : premiumCarData;
+  const currentCarData = selectedCategory === 'eco' ? ecoCarData : 
+                        selectedCategory === 'premium' ? premiumCarData : 
+                        chauffeurCarData;
 
   const CarCard = ({ car }: { car: any }) => (
     <View style={styles.carCard}>
@@ -140,10 +205,15 @@ export default function CarsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Car Rentals</Text>
-        <Text style={styles.headerSubtitle}>Choose from eco-friendly or premium vehicles</Text>
+        <Text style={styles.headerSubtitle}>Choose from eco-friendly, premium or chauffeur vehicles</Text>
       </View>
 
-      <View style={styles.categoryContainer}>
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        style={styles.categoryScrollContainer}
+        contentContainerStyle={styles.categoryContainer}
+      >
         <TouchableOpacity 
           style={[
             styles.categoryButton,
@@ -175,7 +245,23 @@ export default function CarsScreen() {
             Premium Cars
           </Text>
         </TouchableOpacity>
-      </View>
+
+        <TouchableOpacity 
+          style={[
+            styles.categoryButton,
+            selectedCategory === 'chauffeur' && styles.activeCategoryButton
+          ]}
+          onPress={() => setSelectedCategory('chauffeur')}
+        >
+          <User size={16} color={selectedCategory === 'chauffeur' ? '#111111' : '#CCCCCC'} />
+          <Text style={[
+            styles.categoryButtonText,
+            selectedCategory === 'chauffeur' && styles.activeCategoryButtonText
+          ]}>
+            Avec Chauffeur
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         {currentCarData.map((car) => (
@@ -208,21 +294,25 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontFamily: 'Inter',
   },
-  categoryContainer: {
-    flexDirection: 'row',
-    marginHorizontal: 20,
+  categoryScrollContainer: {
     marginBottom: 20,
+  },
+  categoryContainer: {
+    paddingHorizontal: 20,
     backgroundColor: '#1A1A1A',
     borderRadius: 8,
     padding: 4,
+    marginHorizontal: 20,
   },
   categoryButton: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 6,
+    marginRight: 8,
+    minWidth: 120,
   },
   activeCategoryButton: {
     backgroundColor: '#FFD700',
