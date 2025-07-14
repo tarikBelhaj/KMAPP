@@ -4,7 +4,7 @@ import { Moon, Sun, Globe } from 'lucide-react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
-export const ToggleButtons: React.FC = () => {
+export const ToggleButtons = () => {
   const { theme, toggleTheme, isDark } = useTheme();
   const { language, toggleLanguage, t, isRTL } = useLanguage();
 

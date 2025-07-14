@@ -10,12 +10,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Car, Hotel, MapPin, ChevronRight, Search } from 'lucide-react-native';
+import { ChevronRight, Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
-import { useLanguage } from '../contexts/LanguageContext';
-import { ToggleButtons } from '../components/ToggleButtons';
+
 
 const { width } = Dimensions.get('window');
 
@@ -52,10 +50,44 @@ const featuredDeals = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { theme } = useTheme();
-  const { t, isRTL } = useLanguage();
   const [selectedCity, setSelectedCity] = useState('Paris');
   const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+  const [isArabic, setIsArabic] = useState(false);
+
+  // Simple theme object
+  const theme = {
+    colors: {
+      background: isDark ? '#111111' : '#FFFFFF',
+      surface: isDark ? '#1A1A1A' : '#F5F5F5',
+      primary: '#FFD700',
+      text: isDark ? '#FFFFFF' : '#111111',
+      textSecondary: isDark ? '#CCCCCC' : '#666666',
+      border: isDark ? '#333333' : '#E0E0E0',
+      tabBar: isDark ? '#111111' : '#FFFFFF',
+    }
+  };
+
+  // Simple translation function
+  const t = (key: string) => {
+    const translations: { [key: string]: { en: string; ar: string } } = {
+      welcomeBack: { en: 'Welcome Back', ar: 'مرحباً بعودتك' },
+      whereToNext: { en: 'Where to next?', ar: 'إلى أين بعد ذلك؟' },
+      featuredDeals: { en: 'Featured Deals', ar: 'العروض المميزة' },
+      popularCities: { en: 'Popular Cities', ar: 'المدن الشهيرة' },
+      carRentals: { en: 'Car Rentals', ar: 'تأجير السيارات' },
+      hotels: { en: 'Hotels', ar: 'الفنادق' },
+      experiences: { en: 'Experiences', ar: 'التجارب' },
+      viewAll: { en: 'View All', ar: 'عرض الكل' },
+      darkMode: { en: 'Dark Mode', ar: 'الوضع المظلم' },
+      lightMode: { en: 'Light Mode', ar: 'الوضع المضيء' },
+      arabic: { en: 'العربية', ar: 'العربية' },
+      english: { en: 'English', ar: 'English' },
+    };
+    return translations[key] ? translations[key][isArabic ? 'ar' : 'en'] : key;
+  };
+
+  const isRTL = isArabic;
 
   const CategoryButton = ({ icon, title, route }: { icon: any, title: string, route: string }) => (
     <TouchableOpacity 
@@ -82,7 +114,64 @@ export default function HomeScreen() {
         style={{ writingDirection: isRTL ? 'rtl' : 'ltr' }}
       >
         {/* Toggle Buttons */}
-        <ToggleButtons />
+        <View style={[{ flexDirection: isRTL ? 'row-reverse' : 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 10, gap: 10 }]}>
+          {/* Theme Toggle */}
+          <TouchableOpacity
+            style={[{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              gap: 8,
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+            }]}
+            onPress={() => setIsDark(!isDark)}
+          >
+            {isDark ? (
+              <>
+                <Text style={{ fontSize: 20 }}>☀️</Text>
+                <Text style={[{ fontSize: 14, fontWeight: '600', fontFamily: 'Inter', color: theme.colors.text }]}>
+                  {t('lightMode')}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={{ fontSize: 20 }}>🌙</Text>
+                <Text style={[{ fontSize: 14, fontWeight: '600', fontFamily: 'Inter', color: theme.colors.text }]}>
+                  {t('darkMode')}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+
+          {/* Language Toggle */}
+          <TouchableOpacity
+            style={[{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+              borderWidth: 1,
+              gap: 8,
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+            }]}
+            onPress={() => setIsArabic(!isArabic)}
+          >
+            <Text style={{ fontSize: 20 }}>🌍</Text>
+            <Text style={[{ fontSize: 14, fontWeight: '600', fontFamily: 'Inter', color: theme.colors.text }]}>
+              {isArabic ? t('english') : t('arabic')}
+            </Text>
+          </TouchableOpacity>
+        </View>
         
         {/* Header */}
         <View style={styles.header}>
@@ -179,17 +268,17 @@ export default function HomeScreen() {
           </Text>
           <View style={styles.categoriesGrid}>
             <CategoryButton 
-              icon={<Car size={24} color={theme.colors.primary} />}
+              icon={<Text style={{ fontSize: 24 }}>🚗</Text>}
               title={t('carRentals')}
               route="/cars"
             />
             <CategoryButton 
-              icon={<Hotel size={24} color={theme.colors.primary} />}
+              icon={<Text style={{ fontSize: 24 }}>🏨</Text>}
               title={t('hotels')}
               route="/hotels"
             />
             <CategoryButton 
-              icon={<MapPin size={24} color={theme.colors.primary} />}
+              icon={<Text style={{ fontSize: 24 }}>🗺️</Text>}
               title={t('experiences')}
               route="/experiences"
             />
