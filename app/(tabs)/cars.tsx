@@ -419,6 +419,7 @@ const styles = StyleSheet.create({
   },
   categoryScrollContainer: {
     paddingHorizontal: 20,
+    paddingRight: 40, // Extra padding pour éviter la coupure
   },
   categoryPillsContainer: {
     flexDirection: 'row',
@@ -434,7 +435,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderRadius: 30,
-    minWidth: 140,
+    minWidth: 160,
+    maxWidth: 200,
+    flex: 0, // Empêche l'expansion automatique
   },
   activeCategoryPill: {
     backgroundColor: '#FFD700',
