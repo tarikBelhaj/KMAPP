@@ -11,6 +11,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { User, Star, Clock, Car, Zap, Crown, UserCheck } from 'lucide-react-native';
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
@@ -124,6 +126,8 @@ const chauffeurCarData = [
 
 export default function CarsScreen() {
   const [selectedCategory, setSelectedCategory] = useState<'eco' | 'premium' | 'chauffeur'>('premium');
+  const { theme } = useTheme();
+  const { t, isRTL } = useLanguage();
   
   const currentCarData = selectedCategory === 'eco' ? ecoCarData : 
                         selectedCategory === 'premium' ? premiumCarData : 
@@ -196,12 +200,12 @@ export default function CarsScreen() {
 
         <View style={styles.carFooter}>
           <View style={styles.priceContainer}>
-            <Text style={styles.priceAmount}>{car.price}</Text>
-            <Text style={styles.priceUnit}>/jour</Text>
+            <Text style={[styles.priceAmount, { color: theme.colors.primary }]}>{car.price}</Text>
+            <Text style={[styles.priceUnit, { color: theme.colors.textSecondary }]}>{t('perDay')}</Text>
           </View>
           
-          <TouchableOpacity style={styles.bookButton}>
-            <Text style={styles.bookButtonText}>Réserver</Text>
+          <TouchableOpacity style={[styles.bookButton, { backgroundColor: theme.colors.primary }]}>
+            <Text style={[styles.bookButtonText, { color: theme.colors.background }]}>{t('reserve')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -209,11 +213,12 @@ export default function CarsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView 
         showsVerticalScrollIndicator={false} 
         style={styles.mainScrollView}
         contentContainerStyle={styles.scrollContent}
+        style={{ writingDirection: isRTL ? 'rtl' : 'ltr' }}
       >
         {/* Modern Header */}
         <View style={styles.modernHeader}>
@@ -223,26 +228,25 @@ export default function CarsScreen() {
           />
           <View style={styles.headerContent}>
             <View style={styles.titleContainer}>
-              <Text style={styles.mainTitle}>Location de</Text>
-              <Text style={styles.accentTitle}>Véhicules</Text>
+              <Text style={[styles.mainTitle, { color: theme.colors.text }]}>{t('vehicleRental')}</Text>
             </View>
-            <Text style={styles.subtitle}>
-              Découvrez notre collection exclusive de véhicules premium
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+              {t('discoverOurExclusiveCollection')}
             </Text>
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{currentCarData.length}</Text>
-                <Text style={styles.statLabel}>Véhicules</Text>
+                <Text style={[styles.statNumber, { color: theme.colors.primary }]}>{currentCarData.length}</Text>
+                <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('vehicles')}</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>24/7</Text>
-                <Text style={styles.statLabel}>Support</Text>
+                <Text style={[styles.statNumber, { color: theme.colors.primary }]}>24/7</Text>
+                <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('support')}</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>5★</Text>
-                <Text style={styles.statLabel}>Service</Text>
+                <Text style={[styles.statNumber, { color: theme.colors.primary }]}>5★</Text>
+                <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('service')}</Text>
               </View>
             </View>
           </View>
@@ -267,15 +271,17 @@ export default function CarsScreen() {
               <View style={styles.categoryTextContainer}>
                 <Text style={[
                   styles.categoryPillText,
-                  selectedCategory === 'eco' && styles.activeCategoryPillText
+                  selectedCategory === 'eco' && styles.activeCategoryPillText,
+                  { color: selectedCategory === 'eco' ? theme.colors.background : theme.colors.primary }
                 ]}>
-                  Eco Cars
+                  {t('ecoCars')}
                 </Text>
                 <Text style={[
                   styles.categoryCount,
-                  selectedCategory === 'eco' && styles.activeCategoryCount
+                  selectedCategory === 'eco' && styles.activeCategoryCount,
+                  { color: selectedCategory === 'eco' ? `${theme.colors.background}70` : `${theme.colors.primary}70` }
                 ]}>
-                  {getCategoryCount('eco')} véhicules
+                  {getCategoryCount('eco')} {t('vehicles')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -291,15 +297,17 @@ export default function CarsScreen() {
               <View style={styles.categoryTextContainer}>
                 <Text style={[
                   styles.categoryPillText,
-                  selectedCategory === 'premium' && styles.activeCategoryPillText
+                  selectedCategory === 'premium' && styles.activeCategoryPillText,
+                  { color: selectedCategory === 'premium' ? theme.colors.background : theme.colors.primary }
                 ]}>
-                  Premium Cars
+                  {t('premiumCars')}
                 </Text>
                 <Text style={[
                   styles.categoryCount,
-                  selectedCategory === 'premium' && styles.activeCategoryCount
+                  selectedCategory === 'premium' && styles.activeCategoryCount,
+                  { color: selectedCategory === 'premium' ? `${theme.colors.background}70` : `${theme.colors.primary}70` }
                 ]}>
-                  {getCategoryCount('premium')} véhicules
+                  {getCategoryCount('premium')} {t('vehicles')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -315,15 +323,17 @@ export default function CarsScreen() {
               <View style={styles.categoryTextContainer}>
                 <Text style={[
                   styles.categoryPillText,
-                  selectedCategory === 'chauffeur' && styles.activeCategoryPillText
+                  selectedCategory === 'chauffeur' && styles.activeCategoryPillText,
+                  { color: selectedCategory === 'chauffeur' ? theme.colors.background : theme.colors.primary }
                 ]}>
-                  Avec Chauffeur
+                  {t('withChauffeur')}
                 </Text>
                 <Text style={[
                   styles.categoryCount,
-                  selectedCategory === 'chauffeur' && styles.activeCategoryCount
+                  selectedCategory === 'chauffeur' && styles.activeCategoryCount,
+                  { color: selectedCategory === 'chauffeur' ? `${theme.colors.background}70` : `${theme.colors.primary}70` }
                 ]}>
-                  {getCategoryCount('chauffeur')} véhicules
+                  {getCategoryCount('chauffeur')} {t('vehicles')}
                 </Text>
               </View>
             </TouchableOpacity>

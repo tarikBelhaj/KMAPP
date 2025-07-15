@@ -9,6 +9,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin, Clock, Users, Filter } from 'lucide-react-native';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const experiences = [
   {
@@ -69,6 +71,9 @@ const experiences = [
 ];
 
 export default function ExperiencesScreen() {
+  const { theme } = useTheme();
+  const { t, isRTL } = useLanguage();
+
   const ExperienceCard = ({ experience }: { experience: any }) => (
     <View style={styles.experienceCard}>
       <View style={styles.imageContainer}>
@@ -117,7 +122,7 @@ export default function ExperiencesScreen() {
           </View>
           
           <TouchableOpacity style={styles.bookButton}>
-            <Text style={styles.bookButtonText}>Book Experience</Text>
+            <Text style={styles.bookButtonText}>{t('bookExperience')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -125,20 +130,23 @@ export default function ExperiencesScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Premium Experiences</Text>
-        <Text style={styles.headerSubtitle}>Exclusive tours and activities</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('premiumExperiences')}</Text>
+        <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>{t('exclusiveToursAndActivities')}</Text>
       </View>
 
       <View style={styles.filterContainer}>
         <TouchableOpacity style={styles.filterButton}>
-          <Filter size={16} color="#FFD700" />
-          <Text style={styles.filterText}>Filter by City</Text>
+          <Filter size={16} color={theme.colors.primary} />
+          <Text style={[styles.filterText, { color: theme.colors.primary }]}>{t('filterByCity')}</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        style={[styles.scrollView, { writingDirection: isRTL ? 'rtl' : 'ltr' }]}
+      >
         {experiences.map((experience) => (
           <ExperienceCard key={experience.id} experience={experience} />
         ))}

@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Star, MapPin, Gift, Wifi, Car, Hotel } from 'lucide-react-native';
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const normalHotels = [
   {
@@ -106,6 +108,8 @@ const premiumHotels = [
 
 export default function HotelsScreen() {
   const [selectedCategory, setSelectedCategory] = useState<'normal' | 'premium'>('premium');
+  const { theme } = useTheme();
+  const { t, isRTL } = useLanguage();
   
   const currentHotelData = selectedCategory === 'normal' ? normalHotels : premiumHotels;
 
@@ -154,7 +158,7 @@ export default function HotelsScreen() {
           </View>
           
           <TouchableOpacity style={styles.bookButton}>
-            <Text style={styles.bookButtonText}>Book Now</Text>
+            <Text style={styles.bookButtonText}>{t('bookNow')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -162,10 +166,10 @@ export default function HotelsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Hotels</Text>
-        <Text style={styles.headerSubtitle}>From comfortable stays to luxury accommodations</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('hotels')}</Text>
+        <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>{t('fromComfortableStays')}</Text>
       </View>
 
       <View style={styles.categoryContainer}>
@@ -176,12 +180,13 @@ export default function HotelsScreen() {
           ]}
           onPress={() => setSelectedCategory('normal')}
         >
-          <Hotel size={16} color={selectedCategory === 'normal' ? '#111111' : '#CCCCCC'} />
+          <Hotel size={16} color={selectedCategory === 'normal' ? theme.colors.background : theme.colors.primary} />
           <Text style={[
             styles.categoryButtonText,
-            selectedCategory === 'normal' && styles.activeCategoryButtonText
+            selectedCategory === 'normal' && styles.activeCategoryButtonText,
+            { color: selectedCategory === 'normal' ? theme.colors.background : theme.colors.textSecondary }
           ]}>
-            Normal Hotels
+            {t('normalHotels')}
           </Text>
         </TouchableOpacity>
         
@@ -192,17 +197,21 @@ export default function HotelsScreen() {
           ]}
           onPress={() => setSelectedCategory('premium')}
         >
-          <Star size={16} color={selectedCategory === 'premium' ? '#111111' : '#CCCCCC'} />
+          <Star size={16} color={selectedCategory === 'premium' ? theme.colors.background : theme.colors.primary} />
           <Text style={[
             styles.categoryButtonText,
-            selectedCategory === 'premium' && styles.activeCategoryButtonText
+            selectedCategory === 'premium' && styles.activeCategoryButtonText,
+            { color: selectedCategory === 'premium' ? theme.colors.background : theme.colors.textSecondary }
           ]}>
-            Premium Hotels
+            {t('premiumHotels')}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false} 
+        style={[styles.scrollView, { writingDirection: isRTL ? 'rtl' : 'ltr' }]}
+      >
         {currentHotelData.map((hotel) => (
           <HotelCard key={hotel.id} hotel={hotel} />
         ))}
