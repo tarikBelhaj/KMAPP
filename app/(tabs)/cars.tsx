@@ -171,56 +171,58 @@ export default function CarsScreen() {
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false} 
-        style={styles.categoryScrollContainer}
-        contentContainerStyle={styles.categoryContainer}
+        style={styles.categoryScrollView}
+        contentContainerStyle={styles.categoryScrollContainer}
       >
-        <TouchableOpacity 
-          style={[
-            styles.categoryButton,
-            selectedCategory === 'eco' && styles.activeCategoryButton
-          ]}
-          onPress={() => setSelectedCategory('eco')}
-        >
-          <Car size={16} color={selectedCategory === 'eco' ? '#111111' : '#CCCCCC'} />
-          <Text style={[
-            styles.categoryButtonText,
-            selectedCategory === 'eco' && styles.activeCategoryButtonText
-          ]}>
-            Eco Cars
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[
-            styles.categoryButton,
-            selectedCategory === 'premium' && styles.activeCategoryButton
-          ]}
-          onPress={() => setSelectedCategory('premium')}
-        >
-          <Star size={16} color={selectedCategory === 'premium' ? '#111111' : '#CCCCCC'} />
-          <Text style={[
-            styles.categoryButtonText,
-            selectedCategory === 'premium' && styles.activeCategoryButtonText
-          ]}>
-            Premium Cars
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.categoryPillsContainer}>
+          <TouchableOpacity 
+            style={[
+              styles.categoryPill,
+              selectedCategory === 'eco' && styles.activeCategoryPill
+            ]}
+            onPress={() => setSelectedCategory('eco')}
+          >
+            <Car size={18} color={selectedCategory === 'eco' ? '#111111' : '#FFD700'} />
+            <Text style={[
+              styles.categoryPillText,
+              selectedCategory === 'eco' && styles.activeCategoryPillText
+            ]}>
+              Eco Cars
+            </Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[
+              styles.categoryPill,
+              selectedCategory === 'premium' && styles.activeCategoryPill
+            ]}
+            onPress={() => setSelectedCategory('premium')}
+          >
+            <Star size={18} color={selectedCategory === 'premium' ? '#111111' : '#FFD700'} />
+            <Text style={[
+              styles.categoryPillText,
+              selectedCategory === 'premium' && styles.activeCategoryPillText
+            ]}>
+              Premium Cars
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[
-            styles.categoryButton,
-            selectedCategory === 'chauffeur' && styles.activeCategoryButton
-          ]}
-          onPress={() => setSelectedCategory('chauffeur')}
-        >
-          <User size={16} color={selectedCategory === 'chauffeur' ? '#111111' : '#CCCCCC'} />
-          <Text style={[
-            styles.categoryButtonText,
-            selectedCategory === 'chauffeur' && styles.activeCategoryButtonText
-          ]}>
-            Avec Chauffeur
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={[
+              styles.categoryPill,
+              selectedCategory === 'chauffeur' && styles.activeCategoryPill
+            ]}
+            onPress={() => setSelectedCategory('chauffeur')}
+          >
+            <User size={18} color={selectedCategory === 'chauffeur' ? '#111111' : '#FFD700'} />
+            <Text style={[
+              styles.categoryPillText,
+              selectedCategory === 'chauffeur' && styles.activeCategoryPillText
+            ]}>
+              Avec Chauffeur
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
@@ -254,37 +256,39 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontFamily: 'Inter',
   },
-  categoryScrollContainer: {
+  categoryScrollView: {
     marginBottom: 20,
   },
-  categoryContainer: {
+  categoryScrollContainer: {
     paddingHorizontal: 20,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 8,
-    padding: 4,
-    marginHorizontal: 20,
   },
-  categoryButton: {
+  categoryPillsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
+    gap: 12,
+  },
+  categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    borderWidth: 1,
+    borderColor: '#FFD700',
     paddingHorizontal: 16,
-    borderRadius: 6,
-    marginRight: 8,
-    minWidth: 120,
+    paddingVertical: 10,
+    borderRadius: 25,
   },
-  activeCategoryButton: {
+  activeCategoryPill: {
     backgroundColor: '#FFD700',
+    borderColor: '#FFD700',
   },
-  categoryButtonText: {
+  categoryPillText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#CCCCCC',
-    marginLeft: 6,
+    color: '#FFD700',
+    marginLeft: 8,
     fontFamily: 'Inter',
   },
-  activeCategoryButtonText: {
+  activeCategoryPillText: {
     color: '#111111',
   },
   scrollView: {
