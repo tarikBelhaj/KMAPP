@@ -424,7 +424,8 @@ const styles = StyleSheet.create({
   categoryPillsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 15,
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
   },
   categoryPill: {
     flexDirection: 'row',
@@ -432,12 +433,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 215, 0, 0.08)',
     borderWidth: 1,
     borderColor: 'rgba(255, 215, 0, 0.3)',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 16,
     borderRadius: 30,
-    minWidth: 160,
-    maxWidth: 200,
-    flex: 0, // Empêche l'expansion automatique
+    flex: 1,
+    marginHorizontal: 4,
+    justifyContent: 'center',
   },
   activeCategoryPill: {
     backgroundColor: '#FFD700',
