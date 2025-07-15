@@ -210,123 +210,127 @@ export default function CarsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Modern Header */}
-      <View style={styles.modernHeader}>
-        <LinearGradient
-          colors={['rgba(255, 215, 0, 0.1)', 'transparent']}
-          style={styles.headerGradient}
-        />
-        <View style={styles.headerContent}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.mainTitle}>Location de</Text>
-            <Text style={styles.accentTitle}>Véhicules</Text>
-          </View>
-          <Text style={styles.subtitle}>
-            Découvrez notre collection exclusive de véhicules premium
-          </Text>
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{currentCarData.length}</Text>
-              <Text style={styles.statLabel}>Véhicules</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>24/7</Text>
-              <Text style={styles.statLabel}>Support</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>5★</Text>
-              <Text style={styles.statLabel}>Service</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Enhanced Category Pills */}
       <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
-        style={styles.categoryScrollView}
-        contentContainerStyle={styles.categoryScrollContainer}
+        showsVerticalScrollIndicator={false} 
+        style={styles.mainScrollView}
+        contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.categoryPillsContainer}>
-          <TouchableOpacity 
-            style={[
-              styles.categoryPill,
-              selectedCategory === 'eco' && styles.activeCategoryPill
-            ]}
-            onPress={() => setSelectedCategory('eco')}
-          >
-            {getCategoryIcon('eco')}
-            <View style={styles.categoryTextContainer}>
-              <Text style={[
-                styles.categoryPillText,
-                selectedCategory === 'eco' && styles.activeCategoryPillText
-              ]}>
-                Eco Cars
-              </Text>
-              <Text style={[
-                styles.categoryCount,
-                selectedCategory === 'eco' && styles.activeCategoryCount
-              ]}>
-                {getCategoryCount('eco')} véhicules
-              </Text>
+        {/* Modern Header */}
+        <View style={styles.modernHeader}>
+          <LinearGradient
+            colors={['rgba(255, 215, 0, 0.1)', 'transparent']}
+            style={styles.headerGradient}
+          />
+          <View style={styles.headerContent}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.mainTitle}>Location de</Text>
+              <Text style={styles.accentTitle}>Véhicules</Text>
             </View>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[
-              styles.categoryPill,
-              selectedCategory === 'premium' && styles.activeCategoryPill
-            ]}
-            onPress={() => setSelectedCategory('premium')}
-          >
-            {getCategoryIcon('premium')}
-            <View style={styles.categoryTextContainer}>
-              <Text style={[
-                styles.categoryPillText,
-                selectedCategory === 'premium' && styles.activeCategoryPillText
-              ]}>
-                Premium Cars
-              </Text>
-              <Text style={[
-                styles.categoryCount,
-                selectedCategory === 'premium' && styles.activeCategoryCount
-              ]}>
-                {getCategoryCount('premium')} véhicules
-              </Text>
+            <Text style={styles.subtitle}>
+              Découvrez notre collection exclusive de véhicules premium
+            </Text>
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{currentCarData.length}</Text>
+                <Text style={styles.statLabel}>Véhicules</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>24/7</Text>
+                <Text style={styles.statLabel}>Support</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>5★</Text>
+                <Text style={styles.statLabel}>Service</Text>
+              </View>
             </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={[
-              styles.categoryPill,
-              selectedCategory === 'chauffeur' && styles.activeCategoryPill
-            ]}
-            onPress={() => setSelectedCategory('chauffeur')}
-          >
-            {getCategoryIcon('chauffeur')}
-            <View style={styles.categoryTextContainer}>
-              <Text style={[
-                styles.categoryPillText,
-                selectedCategory === 'chauffeur' && styles.activeCategoryPillText
-              ]}>
-                Avec Chauffeur
-              </Text>
-              <Text style={[
-                styles.categoryCount,
-                selectedCategory === 'chauffeur' && styles.activeCategoryCount
-              ]}>
-                {getCategoryCount('chauffeur')} véhicules
-              </Text>
-            </View>
-          </TouchableOpacity>
+          </View>
         </View>
-      </ScrollView>
 
-      {/* Cars List */}
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+        {/* Enhanced Category Pills */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.categoryScrollView}
+          contentContainerStyle={styles.categoryScrollContainer}
+        >
+          <View style={styles.categoryPillsContainer}>
+            <TouchableOpacity 
+              style={[
+                styles.categoryPill,
+                selectedCategory === 'eco' && styles.activeCategoryPill
+              ]}
+              onPress={() => setSelectedCategory('eco')}
+            >
+              {getCategoryIcon('eco')}
+              <View style={styles.categoryTextContainer}>
+                <Text style={[
+                  styles.categoryPillText,
+                  selectedCategory === 'eco' && styles.activeCategoryPillText
+                ]}>
+                  Eco Cars
+                </Text>
+                <Text style={[
+                  styles.categoryCount,
+                  selectedCategory === 'eco' && styles.activeCategoryCount
+                ]}>
+                  {getCategoryCount('eco')} véhicules
+                </Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[
+                styles.categoryPill,
+                selectedCategory === 'premium' && styles.activeCategoryPill
+              ]}
+              onPress={() => setSelectedCategory('premium')}
+            >
+              {getCategoryIcon('premium')}
+              <View style={styles.categoryTextContainer}>
+                <Text style={[
+                  styles.categoryPillText,
+                  selectedCategory === 'premium' && styles.activeCategoryPillText
+                ]}>
+                  Premium Cars
+                </Text>
+                <Text style={[
+                  styles.categoryCount,
+                  selectedCategory === 'premium' && styles.activeCategoryCount
+                ]}>
+                  {getCategoryCount('premium')} véhicules
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[
+                styles.categoryPill,
+                selectedCategory === 'chauffeur' && styles.activeCategoryPill
+              ]}
+              onPress={() => setSelectedCategory('chauffeur')}
+            >
+              {getCategoryIcon('chauffeur')}
+              <View style={styles.categoryTextContainer}>
+                <Text style={[
+                  styles.categoryPillText,
+                  selectedCategory === 'chauffeur' && styles.activeCategoryPillText
+                ]}>
+                  Avec Chauffeur
+                </Text>
+                <Text style={[
+                  styles.categoryCount,
+                  selectedCategory === 'chauffeur' && styles.activeCategoryCount
+                ]}>
+                  {getCategoryCount('chauffeur')} véhicules
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        {/* Cars List */}
         <View style={styles.carsContainer}>
           {currentCarData.map((car) => (
             <CarCard key={car.id} car={car} />
@@ -342,8 +346,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#111111',
   },
+  mainScrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
   modernHeader: {
-    position: 'relative',
     paddingBottom: 30,
   },
   headerGradient: {
@@ -470,9 +479,6 @@ const styles = StyleSheet.create({
   },
   activeCategoryCount: {
     color: 'rgba(17, 17, 17, 0.7)',
-  },
-  scrollView: {
-    flex: 1,
   },
   carsContainer: {
     paddingBottom: 20,
