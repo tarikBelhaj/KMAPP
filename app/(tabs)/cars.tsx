@@ -4,12 +4,15 @@ import {
   StyleSheet, 
   ScrollView, 
   Image, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Dimensions 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { User, Star, Clock, Car } from 'lucide-react-native';
+import { User, Star, Clock, Car, Zap, Crown, UserCheck } from 'lucide-react-native';
 import { useState } from 'react';
+
+const { width } = Dimensions.get('window');
 
 const ecoCarData = [
   {
@@ -21,6 +24,7 @@ const ecoCarData = [
     chauffeur: false,
     rating: 4.5,
     features: ['GPS', 'Bluetooth', 'AC'],
+    badge: 'Eco-Friendly',
   },
   {
     id: 2,
@@ -31,6 +35,7 @@ const ecoCarData = [
     chauffeur: false,
     rating: 4.6,
     features: ['Navigation', 'Heated Seats', 'Parking Assist'],
+    badge: 'Hybrid',
   },
   {
     id: 3,
@@ -41,6 +46,7 @@ const ecoCarData = [
     chauffeur: false,
     rating: 4.7,
     features: ['Premium Sound', 'LED Lights', 'Cruise Control'],
+    badge: 'Low Emission',
   },
 ];
 
@@ -54,6 +60,7 @@ const premiumCarData = [
     chauffeur: false,
     rating: 4.9,
     features: ['WiFi', 'Premium Sound', 'Massage Seats'],
+    badge: 'Luxury',
   },
   {
     id: 2,
@@ -64,6 +71,7 @@ const premiumCarData = [
     chauffeur: false,
     rating: 5.0,
     features: ['Premium Sound', 'Massage Seats', 'Navigation'],
+    badge: 'Exclusive',
   },
   {
     id: 3,
@@ -74,6 +82,7 @@ const premiumCarData = [
     chauffeur: false,
     rating: 5.0,
     features: ['Starlight Headliner', 'Premium Audio', 'Privacy Glass'],
+    badge: 'Ultra Luxury',
   },
   {
     id: 4,
@@ -84,6 +93,7 @@ const premiumCarData = [
     chauffeur: false,
     rating: 4.8,
     features: ['Executive Lounge', 'Gesture Control', 'Fragrance'],
+    badge: 'Executive',
   },
 ];
 
@@ -97,6 +107,7 @@ const chauffeurCarData = [
     chauffeur: true,
     rating: 4.9,
     features: ['Chauffeur Professionnel', 'WiFi', 'Champagne', 'Airport Pickup'],
+    badge: 'VIP Service',
   },
   {
     id: 2,
@@ -107,6 +118,7 @@ const chauffeurCarData = [
     chauffeur: true,
     rating: 4.8,
     features: ['Chauffeur Expérimenté', '8 Places', 'Climatisation', 'Wi-Fi'],
+    badge: 'Group Transport',
   },
 ];
 
@@ -117,24 +129,66 @@ export default function CarsScreen() {
                         selectedCategory === 'premium' ? premiumCarData : 
                         chauffeurCarData;
 
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'eco':
+        return <Zap size={20} color={selectedCategory === 'eco' ? '#111111' : '#FFD700'} />;
+      case 'premium':
+        return <Crown size={20} color={selectedCategory === 'premium' ? '#111111' : '#FFD700'} />;
+      case 'chauffeur':
+        return <UserCheck size={20} color={selectedCategory === 'chauffeur' ? '#111111' : '#FFD700'} />;
+      default:
+        return <Car size={20} color="#FFD700" />;
+    }
+  };
+
+  const getCategoryCount = (category: string) => {
+    switch (category) {
+      case 'eco':
+        return ecoCarData.length;
+      case 'premium':
+        return premiumCarData.length;
+      case 'chauffeur':
+        return chauffeurCarData.length;
+      default:
+        return 0;
+    }
+  };
+
   const CarCard = ({ car }: { car: any }) => (
     <View style={styles.carCard}>
-      <Image source={{ uri: car.image }} style={styles.carImage} />
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: car.image }} style={styles.carImage} />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.7)']}
+          style={styles.imageGradient}
+        />
+        <View style={styles.badgeContainer}>
+          <Text style={styles.badgeText}>{car.badge}</Text>
+        </View>
+        <View style={styles.ratingBadge}>
+          <Star size={12} color="#FFD700" fill="#FFD700" />
+          <Text style={styles.ratingText}>{car.rating}</Text>
+        </View>
+      </View>
+      
       <View style={styles.carInfo}>
         <View style={styles.carHeader}>
-          <View>
+          <View style={styles.carTitleContainer}>
             <Text style={styles.carName}>{car.name}</Text>
             <Text style={styles.carModel}>{car.model}</Text>
           </View>
-          <View style={styles.ratingContainer}>
-            <Star size={14} color="#FFD700" fill="#FFD700" />
-            <Text style={styles.rating}>{car.rating}</Text>
-          </View>
+          
+          {car.chauffeur && (
+            <View style={styles.chauffeurIndicator}>
+              <UserCheck size={16} color="#FFD700" />
+            </View>
+          )}
         </View>
         
         <View style={styles.featuresContainer}>
-          {car.features.map((feature: string, index: number) => (
-            <View key={index} style={styles.featureTag}>
+          {car.features.slice(0, 3).map((feature: string, index: number) => (
+            <View key={index} style={styles.featureChip}>
               <Text style={styles.featureText}>{feature}</Text>
             </View>
           ))}
@@ -142,32 +196,54 @@ export default function CarsScreen() {
 
         <View style={styles.carFooter}>
           <View style={styles.priceContainer}>
-            <Text style={styles.price}>{car.price}</Text>
-            <Text style={styles.priceUnit}>/day</Text>
+            <Text style={styles.priceAmount}>{car.price}</Text>
+            <Text style={styles.priceUnit}>/jour</Text>
           </View>
           
-          {car.chauffeur && (
-            <View style={styles.chauffeurBadge}>
-              <User size={12} color="#FFD700" />
-              <Text style={styles.chauffeurText}>Chauffeur</Text>
-            </View>
-          )}
+          <TouchableOpacity style={styles.bookButton}>
+            <Text style={styles.bookButtonText}>Réserver</Text>
+          </TouchableOpacity>
         </View>
-        
-        <TouchableOpacity style={styles.bookButton}>
-          <Text style={styles.bookButtonText}>Book Now</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Car Rentals</Text>
-        <Text style={styles.headerSubtitle}>Choose from eco-friendly, premium or chauffeur vehicles</Text>
+      {/* Modern Header */}
+      <View style={styles.modernHeader}>
+        <LinearGradient
+          colors={['rgba(255, 215, 0, 0.1)', 'transparent']}
+          style={styles.headerGradient}
+        />
+        <View style={styles.headerContent}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.mainTitle}>Location de</Text>
+            <Text style={styles.accentTitle}>Véhicules</Text>
+          </View>
+          <Text style={styles.subtitle}>
+            Découvrez notre collection exclusive de véhicules premium
+          </Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{currentCarData.length}</Text>
+              <Text style={styles.statLabel}>Véhicules</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>24/7</Text>
+              <Text style={styles.statLabel}>Support</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>5★</Text>
+              <Text style={styles.statLabel}>Service</Text>
+            </View>
+          </View>
+        </View>
       </View>
 
+      {/* Enhanced Category Pills */}
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false} 
@@ -182,13 +258,21 @@ export default function CarsScreen() {
             ]}
             onPress={() => setSelectedCategory('eco')}
           >
-            <Car size={18} color={selectedCategory === 'eco' ? '#111111' : '#FFD700'} />
-            <Text style={[
-              styles.categoryPillText,
-              selectedCategory === 'eco' && styles.activeCategoryPillText
-            ]}>
-              Eco Cars
-            </Text>
+            {getCategoryIcon('eco')}
+            <View style={styles.categoryTextContainer}>
+              <Text style={[
+                styles.categoryPillText,
+                selectedCategory === 'eco' && styles.activeCategoryPillText
+              ]}>
+                Eco Cars
+              </Text>
+              <Text style={[
+                styles.categoryCount,
+                selectedCategory === 'eco' && styles.activeCategoryCount
+              ]}>
+                {getCategoryCount('eco')} véhicules
+              </Text>
+            </View>
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -198,13 +282,21 @@ export default function CarsScreen() {
             ]}
             onPress={() => setSelectedCategory('premium')}
           >
-            <Star size={18} color={selectedCategory === 'premium' ? '#111111' : '#FFD700'} />
-            <Text style={[
-              styles.categoryPillText,
-              selectedCategory === 'premium' && styles.activeCategoryPillText
-            ]}>
-              Premium Cars
-            </Text>
+            {getCategoryIcon('premium')}
+            <View style={styles.categoryTextContainer}>
+              <Text style={[
+                styles.categoryPillText,
+                selectedCategory === 'premium' && styles.activeCategoryPillText
+              ]}>
+                Premium Cars
+              </Text>
+              <Text style={[
+                styles.categoryCount,
+                selectedCategory === 'premium' && styles.activeCategoryCount
+              ]}>
+                {getCategoryCount('premium')} véhicules
+              </Text>
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -214,21 +306,32 @@ export default function CarsScreen() {
             ]}
             onPress={() => setSelectedCategory('chauffeur')}
           >
-            <User size={18} color={selectedCategory === 'chauffeur' ? '#111111' : '#FFD700'} />
-            <Text style={[
-              styles.categoryPillText,
-              selectedCategory === 'chauffeur' && styles.activeCategoryPillText
-            ]}>
-              Avec Chauffeur
-            </Text>
+            {getCategoryIcon('chauffeur')}
+            <View style={styles.categoryTextContainer}>
+              <Text style={[
+                styles.categoryPillText,
+                selectedCategory === 'chauffeur' && styles.activeCategoryPillText
+              ]}>
+                Avec Chauffeur
+              </Text>
+              <Text style={[
+                styles.categoryCount,
+                selectedCategory === 'chauffeur' && styles.activeCategoryCount
+              ]}>
+                {getCategoryCount('chauffeur')} véhicules
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
+      {/* Cars List */}
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-        {currentCarData.map((car) => (
-          <CarCard key={car.id} car={car} />
-        ))}
+        <View style={styles.carsContainer}>
+          {currentCarData.map((car) => (
+            <CarCard key={car.id} car={car} />
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -239,25 +342,80 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#111111',
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
+  modernHeader: {
+    position: 'relative',
+    paddingBottom: 30,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  headerGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '100%',
+  },
+  headerContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 8,
+  },
+  mainTitle: {
+    fontSize: 32,
+    fontWeight: '300',
     color: '#FFFFFF',
     fontFamily: 'Inter',
+    marginRight: 8,
   },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#CCCCCC',
-    marginTop: 5,
+  accentTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#FFD700',
     fontFamily: 'Inter',
   },
-  categoryScrollView: {
+  subtitle: {
+    fontSize: 16,
+    color: '#CCCCCC',
+    fontFamily: 'Inter',
+    lineHeight: 22,
     marginBottom: 20,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.2)',
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFD700',
+    fontFamily: 'Inter',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#CCCCCC',
+    fontFamily: 'Inter',
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(255, 215, 0, 0.3)',
+    marginHorizontal: 15,
+  },
+  categoryScrollView: {
+    marginBottom: 25,
   },
   categoryScrollContainer: {
     paddingHorizontal: 20,
@@ -265,100 +423,170 @@ const styles = StyleSheet.create({
   categoryPillsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 15,
   },
   categoryPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    backgroundColor: 'rgba(255, 215, 0, 0.08)',
     borderWidth: 1,
-    borderColor: '#FFD700',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 25,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderRadius: 30,
+    minWidth: 140,
   },
   activeCategoryPill: {
     backgroundColor: '#FFD700',
     borderColor: '#FFD700',
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  categoryTextContainer: {
+    marginLeft: 12,
+    flex: 1,
   },
   categoryPillText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: '#FFD700',
-    marginLeft: 8,
     fontFamily: 'Inter',
   },
   activeCategoryPillText: {
     color: '#111111',
   },
+  categoryCount: {
+    fontSize: 11,
+    color: 'rgba(255, 215, 0, 0.7)',
+    fontFamily: 'Inter',
+    marginTop: 2,
+  },
+  activeCategoryCount: {
+    color: 'rgba(17, 17, 17, 0.7)',
+  },
   scrollView: {
     flex: 1,
+  },
+  carsContainer: {
+    paddingBottom: 20,
   },
   carCard: {
     backgroundColor: '#1A1A1A',
     marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 12,
+    marginBottom: 24,
+    borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#333333',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  imageContainer: {
+    position: 'relative',
+    height: 220,
   },
   carImage: {
     width: '100%',
-    height: 200,
+    height: '100%',
   },
-  carInfo: {
-    padding: 16,
+  imageGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
-  carHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
+  badgeContainer: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
   },
-  carName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
+  badgeText: {
+    color: '#FFD700',
+    fontSize: 12,
+    fontWeight: '600',
     fontFamily: 'Inter',
   },
-  carModel: {
-    fontSize: 14,
-    color: '#CCCCCC',
-    marginTop: 2,
-    fontFamily: 'Inter',
-  },
-  ratingContainer: {
+  ratingBadge: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#222222',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
   },
-  rating: {
+  ratingText: {
     color: '#FFD700',
     fontSize: 12,
     fontWeight: '600',
     marginLeft: 4,
     fontFamily: 'Inter',
   },
+  carInfo: {
+    padding: 20,
+  },
+  carHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  carTitleContainer: {
+    flex: 1,
+  },
+  carName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    fontFamily: 'Inter',
+    marginBottom: 4,
+  },
+  carModel: {
+    fontSize: 15,
+    color: '#CCCCCC',
+    fontFamily: 'Inter',
+  },
+  chauffeurIndicator: {
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    padding: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
+  },
   featuresContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 16,
+    marginBottom: 20,
+    gap: 8,
   },
-  featureTag: {
+  featureChip: {
     backgroundColor: '#333333',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginRight: 8,
-    marginBottom: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#444444',
   },
   featureText: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     fontFamily: 'Inter',
   },
@@ -366,44 +594,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
   },
-  price: {
-    fontSize: 24,
+  priceAmount: {
+    fontSize: 28,
     fontWeight: '700',
     color: '#FFD700',
     fontFamily: 'Inter',
   },
   priceUnit: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#CCCCCC',
-    marginLeft: 4,
-    fontFamily: 'Inter',
-  },
-  chauffeurBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#222222',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  chauffeurText: {
-    color: '#FFD700',
-    fontSize: 12,
-    fontWeight: '600',
-    marginLeft: 4,
+    marginLeft: 6,
     fontFamily: 'Inter',
   },
   bookButton: {
     backgroundColor: '#FFD700',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   bookButtonText: {
     color: '#111111',
