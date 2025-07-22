@@ -5,128 +5,236 @@ import {
   ScrollView, 
   Image, 
   TouchableOpacity,
-  Platform
+  Platform,
+  TextInput,
+  Dimensions
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MapPin, Clock, Users, Filter } from 'lucide-react-native';
+import { MapPin, Clock, Users, Filter, Search, Star, Heart, ChevronDown } from 'lucide-react-native';
+import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
+const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
-const experiences = [
+const genevaExperiences = [
   {
     id: 1,
-    title: 'Private Louvre Museum Tour',
-    location: 'Paris',
-    duration: '3 hours',
-    price: '€800',
+    title: 'Genève : Croisière de 50 minutes sur le lac Léman',
+    location: 'Genève',
+    duration: '50 minutes',
+    price: '€20',
+    originalPrice: null,
     image: 'https://images.pexels.com/photos/2675266/pexels-photo-2675266.jpeg?auto=compress&cs=tinysrgb&w=800',
-    groupSize: 'Up to 6 people',
-    type: 'Cultural',
-    highlights: ['Skip-the-line access', 'Expert guide', 'Mona Lisa VIP viewing'],
+    groupSize: 'Coupe-file',
+    type: 'Croisières et sorties en bateau',
+    rating: 4.3,
+    reviews: 3476,
+    highlights: ['Audioguide en option', 'Vue panoramique', 'Départ du centre-ville'],
+    badge: 'Coup de cœur',
+    category: 'boat'
   },
   {
     id: 2,
-    title: 'Michelin Star Dining Experience',
-    location: 'London',
-    duration: '4 hours',
-    price: '€1,200',
-    image: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800',
-    groupSize: 'Up to 8 people',
-    type: 'Culinary',
-    highlights: ['3-Michelin stars', 'Chef interaction', 'Wine pairing'],
+    title: 'Genève : Croisière panoramique sur le lac avec collations et vin',
+    location: 'Genève',
+    duration: '1 heure',
+    price: '€31',
+    originalPrice: null,
+    image: 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
+    groupSize: 'Petit groupe',
+    type: 'Croisières et sorties en bateau',
+    rating: 4.3,
+    reviews: 1133,
+    highlights: ['Collations incluses', 'Vin local', 'Guide professionnel'],
+    badge: null,
+    category: 'boat'
   },
   {
     id: 3,
-    title: 'Private Champagne Region Tour',
-    location: 'Reims',
-    duration: 'Full day',
-    price: '€1,500',
-    image: 'https://images.pexels.com/photos/1407846/pexels-photo-1407846.jpeg?auto=compress&cs=tinysrgb&w=800',
-    groupSize: 'Up to 4 people',
-    type: 'Wine & Spirits',
-    highlights: ['Dom Pérignon cellar', 'Helicopter transfer', 'Lunch included'],
+    title: 'Genève : Visite touristique en bus à toit ouvert',
+    location: 'Genève',
+    duration: '75 minutes',
+    price: '€28',
+    originalPrice: null,
+    image: 'https://images.pexels.com/photos/1134176/pexels-photo-1134176.jpeg?auto=compress&cs=tinysrgb&w=800',
+    groupSize: 'Audioguide en option',
+    type: 'Excursions à la journée',
+    rating: 3.6,
+    reviews: 510,
+    highlights: ['Bus à toit ouvert', 'Audioguide multilingue', 'Arrêts multiples'],
+    badge: null,
+    category: 'tour'
   },
   {
     id: 4,
-    title: 'Luxury Spa & Wellness Retreat',
-    location: 'Vienna',
-    duration: '6 hours',
-    price: '€650',
+    title: 'Au départ de Genève : Excursion guidée à Chamonix et au Mont-Blanc',
+    location: 'Genève',
+    duration: '9-10 heures',
+    price: '€96',
+    originalPrice: '€115',
     image: 'https://images.pexels.com/photos/3188018/pexels-photo-3188018.jpeg?auto=compress&cs=tinysrgb&w=800',
-    groupSize: 'Up to 2 people',
-    type: 'Wellness',
-    highlights: ['Thermal baths', 'Personal trainer', 'Organic treatments'],
+    groupSize: 'Groupe',
+    type: 'Nature et aventure',
+    rating: 4.4,
+    reviews: 1382,
+    highlights: ['Transport inclus', 'Guide expert', 'Vue sur le Mont-Blanc'],
+    badge: null,
+    category: 'nature'
   },
   {
     id: 5,
-    title: 'Private Yacht Mediterranean Cruise',
-    location: 'Monaco',
-    duration: '8 hours',
-    price: '€2,800',
-    image: 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
-    groupSize: 'Up to 12 people',
-    type: 'Luxury',
-    highlights: ['85ft luxury yacht', 'Chef on board', 'Water sports'],
+    title: 'Au départ de Genève : Excursion d\'une demi-journée à Annecy',
+    location: 'Genève',
+    duration: '4.5 heures',
+    price: '€45',
+    originalPrice: null,
+    image: 'https://images.pexels.com/photos/1407846/pexels-photo-1407846.jpeg?auto=compress&cs=tinysrgb&w=800',
+    groupSize: 'Petit groupe',
+    type: 'Excursions à la journée',
+    rating: 4.2,
+    reviews: 892,
+    highlights: ['Venise des Alpes', 'Temps libre', 'Transport confortable'],
+    badge: 'Originals by GetYourGuide',
+    category: 'tour'
   },
+  {
+    id: 6,
+    title: 'Haute-Savoie: descente en rafting découverte et apéritif',
+    location: 'Haute-Savoie',
+    duration: '3 heures',
+    price: '€65',
+    originalPrice: null,
+    image: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800',
+    groupSize: 'Petit groupe',
+    type: 'Nature et aventure',
+    rating: 4.7,
+    reviews: 234,
+    highlights: ['Rafting découverte', 'Apéritif inclus', 'Équipement fourni'],
+    badge: null,
+    category: 'nature'
+  },
+  {
+    id: 7,
+    title: 'Chamonix : Vol en parapente en tandem avec vue sur le Mont-Blanc',
+    location: 'Chamonix',
+    duration: '1 heure',
+    price: '€120',
+    originalPrice: null,
+    image: 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
+    groupSize: 'Individuel',
+    type: 'Nature et aventure',
+    rating: 4.8,
+    reviews: 567,
+    highlights: ['Vol en tandem', 'Vue Mont-Blanc', 'Pilote expérimenté'],
+    badge: null,
+    category: 'nature'
+  },
+  {
+    id: 8,
+    title: 'Atelier chocolat suisse traditionnel à Genève',
+    location: 'Genève',
+    duration: '2 heures',
+    price: '€85',
+    originalPrice: null,
+    image: 'https://images.pexels.com/photos/3188018/pexels-photo-3188018.jpeg?auto=compress&cs=tinysrgb&w=800',
+    groupSize: 'Petit groupe',
+    type: 'Ateliers et visites sur le chocolat',
+    rating: 4.6,
+    reviews: 445,
+    highlights: ['Chocolat artisanal', 'Dégustation', 'Techniques traditionnelles'],
+    badge: null,
+    category: 'chocolate'
+  }
 ];
+
+const categories = [
+  { id: 'all', name: 'Tous', icon: '🌟' },
+  { id: 'boat', name: 'Croisières et sorties en bateau', icon: '🚢' },
+  { id: 'tour', name: 'Excursions à la journée', icon: '🚌' },
+  { id: 'chocolate', name: 'Ateliers et visites sur le chocolat', icon: '🍫' },
+  { id: 'nature', name: 'Nature et aventure', icon: '🏔️' },
+  { id: 'ski', name: 'Ski et snowboard', icon: '⛷️' }
+];
+
+const cities = ['Genève', 'Chamonix', 'Annecy', 'Haute-Savoie', 'Montreux'];
 
 export default function ExperiencesScreen() {
   const { theme } = useTheme();
   const { t, isRTL } = useLanguage();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchText, setSearchText] = useState('');
+  const [selectedCity, setSelectedCity] = useState('Genève');
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('recommended');
+
+  const filteredExperiences = genevaExperiences.filter(experience => {
+    const matchesCategory = selectedCategory === 'all' || experience.category === selectedCategory;
+    const matchesSearch = experience.title.toLowerCase().includes(searchText.toLowerCase()) ||
+                         experience.type.toLowerCase().includes(searchText.toLowerCase());
+    const matchesCity = selectedCity === 'Tous' || experience.location.includes(selectedCity);
+    
+    return matchesCategory && matchesSearch && matchesCity;
+  });
 
   const ExperienceCard = ({ experience }: { experience: any }) => (
-    <View style={styles.experienceCard}>
+    <View style={[styles.experienceCard, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: experience.image }} style={styles.experienceImage} />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.6)']}
           style={styles.imageGradient}
         />
-        <View style={styles.typeTag}>
-          <Text style={styles.typeText}>{experience.type}</Text>
-        </View>
+        
+        {/* Heart Icon */}
+        <TouchableOpacity style={styles.heartButton}>
+          <Heart size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        
+        {/* Badge */}
+        {experience.badge && (
+          <View style={[styles.badge, experience.badge === 'Coup de cœur' && styles.heartBadge]}>
+            <Text style={[styles.badgeText, { color: theme.colors.background }]}>{experience.badge}</Text>
+          </View>
+        )}
       </View>
       
       <View style={styles.experienceInfo}>
-        <Text style={styles.experienceTitle}>{experience.title}</Text>
+        <Text style={[styles.experienceTitle, { color: theme.colors.text }]} numberOfLines={2}>
+          {experience.title}
+        </Text>
         
-        <View style={styles.detailsContainer}>
+        <View style={styles.detailsRow}>
           <View style={styles.detailItem}>
-            <MapPin size={14} color="#CCCCCC" />
-            <Text style={styles.detailText}>{experience.location}</Text>
+            <Clock size={14} color={theme.colors.textSecondary} />
+            <Text style={[styles.detailText, { color: theme.colors.textSecondary }]}>{experience.duration}</Text>
           </View>
           
-          <View style={styles.detailItem}>
-            <Clock size={14} color="#CCCCCC" />
-            <Text style={styles.detailText}>{experience.duration}</Text>
-          </View>
-          
-          <View style={styles.detailItem}>
-            <Users size={14} color="#CCCCCC" />
-            <Text style={styles.detailText}>{experience.groupSize}</Text>
+          <Text style={[styles.groupSize, { color: theme.colors.textSecondary }]}>• {experience.groupSize}</Text>
+        </View>
+
+        <View style={styles.ratingRow}>
+          <View style={styles.ratingContainer}>
+            <Star size={14} color="#FFD700" fill="#FFD700" />
+            <Text style={[styles.rating, { color: theme.colors.text }]}>{experience.rating}</Text>
+            <Text style={[styles.reviewCount, { color: theme.colors.textSecondary }]}>({experience.reviews})</Text>
           </View>
         </View>
 
-        <View style={styles.highlightsContainer}>
-          {experience.highlights.map((highlight: string, index: number) => (
-            <View key={index} style={styles.highlightTag}>
-              <Text style={styles.highlightText}>{highlight}</Text>
+        <View style={styles.priceRow}>
+          <View style={styles.priceContainer}>
+            <Text style={[styles.fromText, { color: theme.colors.textSecondary }]}>À partir de</Text>
+            <View style={styles.priceInfo}>
+              {experience.originalPrice && (
+                <Text style={[styles.originalPrice, { color: theme.colors.textSecondary }]}>{experience.originalPrice}</Text>
+              )}
+              <Text style={[styles.price, { color: theme.colors.text }]}>{experience.price}</Text>
+              <Text style={[styles.priceUnit, { color: theme.colors.textSecondary }]}>par personne</Text>
             </View>
-          ))}
-        </View>
-
-        <View style={styles.priceContainer}>
-          <View style={styles.priceInfo}>
-            <Text style={styles.price}>{experience.price}</Text>
-            <Text style={styles.priceUnit}>/group</Text>
           </View>
-          
-          <TouchableOpacity style={styles.bookButton}>
-            <Text style={styles.bookButtonText}>{t('bookExperience')}</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -134,18 +242,118 @@ export default function ExperiencesScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('premiumExperiences')}</Text>
-        <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>{t('exclusiveToursAndActivities')}</Text>
+      {/* Header with Search */}
+      <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Genève : explorez</Text>
+        
+        {/* Search Bar */}
+        <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Search size={20} color={theme.colors.textSecondary} />
+          <TextInput
+            style={[styles.searchInput, { color: theme.colors.text }]}
+            placeholder="Rechercher des expériences..."
+            placeholderTextColor={theme.colors.textSecondary}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+
+        {/* City Selector and Date */}
+        <View style={styles.filtersRow}>
+          <TouchableOpacity 
+            style={[styles.cityButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+            onPress={() => setShowCityDropdown(!showCityDropdown)}
+          >
+            <Text style={[styles.cityButtonText, { color: theme.colors.text }]}>{selectedCity}</Text>
+            <ChevronDown size={16} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={[styles.dateButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <Text style={[styles.dateButtonText, { color: theme.colors.text }]}>Date flexible</Text>
+            <ChevronDown size={16} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={[styles.searchButton, { backgroundColor: theme.colors.primary }]}>
+            <Text style={[styles.searchButtonText, { color: theme.colors.background }]}>Rechercher</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* City Dropdown */}
+        {showCityDropdown && (
+          <View style={[styles.cityDropdown, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            {cities.map((city) => (
+              <TouchableOpacity
+                key={city}
+                style={styles.cityOption}
+                onPress={() => {
+                  setSelectedCity(city);
+                  setShowCityDropdown(false);
+                }}
+              >
+                <Text style={[styles.cityOptionText, { color: theme.colors.text }]}>{city}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
 
-      <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.filterButton}>
-          <Filter size={16} color={theme.colors.primary} />
-          <Text style={[styles.filterText, { color: theme.colors.primary }]}>{t('filterByCity')}</Text>
-        </TouchableOpacity>
+      {/* Category Filters */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        style={styles.categoryScrollView}
+        contentContainerStyle={styles.categoryScrollContainer}
+      >
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category.id}
+            style={[
+              styles.categoryChip,
+              selectedCategory === category.id && [styles.activeCategoryChip, { backgroundColor: theme.colors.primary }],
+              { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }
+            ]}
+            onPress={() => setSelectedCategory(category.id)}
+          >
+            <Text style={styles.categoryIcon}>{category.icon}</Text>
+            <Text style={[
+              styles.categoryText,
+              selectedCategory === category.id && [styles.activeCategoryText, { color: theme.colors.background }],
+              { color: theme.colors.text }
+            ]}>
+              {category.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Results Header */}
+      <View style={styles.resultsHeader}>
+        <Text style={[styles.resultsCount, { color: theme.colors.text }]}>
+          {filteredExperiences.length} activités trouvées
+        </Text>
+        
+        <View style={styles.resultsActions}>
+          <TouchableOpacity 
+            style={[styles.sortButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+            onPress={() => setSortBy(sortBy === 'recommended' ? 'price' : 'recommended')}
+          >
+            <Text style={[styles.sortText, { color: theme.colors.text }]}>
+              Trier par : {sortBy === 'recommended' ? 'Conseillé' : 'Prix'}
+            </Text>
+            <ChevronDown size={16} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.filterButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+            onPress={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={16} color={theme.colors.primary} />
+            <Text style={[styles.filterText, { color: theme.colors.primary }]}>Filtres</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
+      {/* Experiences List */}
       <ScrollView 
         showsVerticalScrollIndicator={false} 
         style={[
@@ -153,11 +361,16 @@ export default function ExperiencesScreen() {
           { writingDirection: isRTL ? 'rtl' : 'ltr' },
           isWeb && styles.webScrollView
         ]}
-        contentContainerStyle={isWeb ? styles.webContentContainer : undefined}
+        contentContainerStyle={[
+          styles.scrollContent,
+          isWeb && styles.webContentContainer
+        ]}
       >
-        {experiences.map((experience) => (
-          <ExperienceCard key={experience.id} experience={experience} />
-        ))}
+        <View style={styles.experiencesGrid}>
+          {filteredExperiences.map((experience) => (
+            <ExperienceCard key={experience.id} experience={experience} />
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -166,7 +379,6 @@ export default function ExperiencesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111111',
     ...(isWeb && {
       maxWidth: 1200,
       alignSelf: 'center',
@@ -183,95 +395,309 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
     ...(isWeb && {
       paddingHorizontal: 40,
       paddingTop: 20,
-      paddingBottom: 20,
+      paddingBottom: 25,
     }),
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    marginBottom: 15,
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 32,
+      fontSize: 28,
+      marginBottom: 20,
     }),
   },
-  headerSubtitle: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
+    marginBottom: 15,
+    ...(isWeb && {
+      paddingVertical: 16,
+      marginBottom: 20,
+    }),
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 16,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      outline: 'none',
+    }),
+  },
+  filtersRow: {
+    flexDirection: 'row',
+    gap: 10,
+    ...(isWeb && {
+      gap: 15,
+    }),
+  },
+  cityButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 16,
+    }),
+  },
+  cityButtonText: {
     fontSize: 14,
-    color: '#CCCCCC',
-    marginTop: 5,
+    fontWeight: '500',
     fontFamily: 'Inter',
     ...(isWeb && {
       fontSize: 16,
     }),
   },
-  filterContainer: {
+  dateButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 16,
+    }),
+  },
+  dateButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  searchButton: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 16,
+      paddingHorizontal: 24,
+    }),
+  },
+  searchButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  cityDropdown: {
+    position: 'absolute',
+    top: 140,
+    left: 20,
+    right: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    maxHeight: 200,
+    zIndex: 1000,
+    ...(isWeb && {
+      left: 40,
+      right: 40,
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+    }),
+  },
+  cityOption: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    ...(isWeb && {
+      cursor: 'pointer',
+    }),
+  },
+  cityOptionText: {
+    fontSize: 16,
+    fontFamily: 'Inter',
+  },
+  categoryScrollView: {
+    paddingVertical: 15,
+    ...(isWeb && {
+      paddingVertical: 20,
+    }),
+  },
+  categoryScrollContainer: {
+    paddingHorizontal: 20,
+    gap: 10,
     ...(isWeb && {
       paddingHorizontal: 40,
-      paddingBottom: 30,
+      gap: 15,
+    }),
+  },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      transition: 'all 0.2s ease',
+    }),
+  },
+  activeCategoryChip: {
+    borderColor: 'transparent',
+  },
+  categoryIcon: {
+    fontSize: 16,
+    marginRight: 8,
+    ...(isWeb && {
+      fontSize: 18,
+    }),
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  activeCategoryText: {
+    fontWeight: '600',
+  },
+  resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingVertical: 15,
+    }),
+  },
+  resultsCount: {
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  resultsActions: {
+    flexDirection: 'row',
+    gap: 10,
+    ...(isWeb && {
+      gap: 15,
+    }),
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+    }),
+  },
+  sortText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginRight: 4,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
     }),
   },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingVertical: 6,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#333333',
-    alignSelf: 'flex-start',
     ...(isWeb && {
       cursor: 'pointer',
       paddingHorizontal: 16,
-      paddingVertical: 12,
-      borderRadius: 12,
-      transition: 'all 0.2s ease',
+      paddingVertical: 8,
     }),
   },
   filterText: {
-    color: '#FFD700',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    marginLeft: 6,
+    marginLeft: 4,
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 16,
+      fontSize: 14,
     }),
   },
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 20,
+    ...(isWeb && {
+      paddingBottom: 40,
+    }),
+  },
+  experiencesGrid: {
+    paddingHorizontal: 20,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+      gap: '20px',
+    }),
+  },
   experienceCard: {
-    backgroundColor: '#1A1A1A',
-    marginHorizontal: 20,
-    marginBottom: 20,
     borderRadius: 12,
     overflow: 'hidden',
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#333333',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
     ...(isWeb && {
-      marginHorizontal: 40,
-      marginBottom: 30,
-      borderRadius: 16,
       cursor: 'pointer',
       transition: 'transform 0.2s ease',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+      marginBottom: 0,
     }),
   },
   imageContainer: {
     position: 'relative',
+    height: 200,
+    ...(isWeb && {
+      height: 240,
+    }),
   },
   experienceImage: {
     width: '100%',
-    height: 180,
+    height: '100%',
     ...(isWeb && {
-      height: 220,
       objectFit: 'cover',
     }),
   },
@@ -282,24 +708,41 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  typeTag: {
+  heartButton: {
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...(isWeb && {
+      cursor: 'pointer',
+      top: 16,
+      right: 16,
+    }),
+  },
+  badge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    backgroundColor: '#FF6B6B',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
     ...(isWeb && {
       top: 16,
-      right: 16,
+      left: 16,
       paddingHorizontal: 12,
       paddingVertical: 6,
-      borderRadius: 8,
     }),
   },
-  typeText: {
-    color: '#FFD700',
+  heartBadge: {
+    backgroundColor: '#FF4757',
+  },
+  badgeText: {
     fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Inter',
@@ -310,121 +753,119 @@ const styles = StyleSheet.create({
   experienceInfo: {
     padding: 16,
     ...(isWeb && {
-      padding: 24,
+      padding: 20,
     }),
   },
   experienceTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 12,
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 22,
+    marginBottom: 8,
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 22,
-      marginBottom: 16,
+      fontSize: 18,
+      lineHeight: 24,
+      marginBottom: 12,
     }),
   },
-  detailsContainer: {
+  detailsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
+    alignItems: 'center',
+    marginBottom: 8,
     ...(isWeb && {
-      marginBottom: 16,
+      marginBottom: 12,
     }),
   },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
   },
   detailText: {
-    fontSize: 12,
-    color: '#CCCCCC',
+    fontSize: 14,
     marginLeft: 4,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  groupSize: {
+    fontSize: 14,
+    marginLeft: 8,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  ratingRow: {
+    marginBottom: 12,
+    ...(isWeb && {
+      marginBottom: 16,
+    }),
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rating: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 4,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  reviewCount: {
+    fontSize: 14,
+    marginLeft: 4,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  priceContainer: {
+    flex: 1,
+  },
+  fromText: {
+    fontSize: 12,
     fontFamily: 'Inter',
     ...(isWeb && {
       fontSize: 14,
     }),
   },
-  highlightsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-    ...(isWeb && {
-      marginBottom: 20,
-    }),
-  },
-  highlightTag: {
-    backgroundColor: '#333333',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginRight: 8,
-    marginBottom: 4,
-    ...(isWeb && {
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 8,
-      marginRight: 10,
-      marginBottom: 6,
-    }),
-  },
-  highlightText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '500',
-    fontFamily: 'Inter',
-    ...(isWeb && {
-      fontSize: 12,
-    }),
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   priceInfo: {
     flexDirection: 'row',
     alignItems: 'baseline',
+    flexWrap: 'wrap',
   },
-  price: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#FFD700',
+  originalPrice: {
+    fontSize: 14,
+    textDecorationLine: 'line-through',
+    marginRight: 6,
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 28,
+      fontSize: 16,
+    }),
+  },
+  price: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginRight: 4,
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 20,
     }),
   },
   priceUnit: {
-    fontSize: 14,
-    color: '#CCCCCC',
-    marginLeft: 4,
+    fontSize: 12,
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 16,
-    }),
-  },
-  bookButton: {
-    backgroundColor: '#FFD700',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    ...(isWeb && {
-      cursor: 'pointer',
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 8,
-      transition: 'all 0.2s ease',
-    }),
-  },
-  bookButtonText: {
-    color: '#111111',
-    fontSize: 14,
-    fontWeight: '700',
-    fontFamily: 'Inter',
-    ...(isWeb && {
-      fontSize: 16,
+      fontSize: 14,
     }),
   },
 });
