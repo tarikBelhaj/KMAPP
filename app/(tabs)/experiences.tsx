@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MapPin, Clock, Users, Filter, Search, Star, Heart, ChevronDown } from 'lucide-react-native';
+import { MapPin, Clock, Users, Filter, Search, Star, Heart, ChevronDown, Calendar, SlidersHorizontal } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -34,7 +34,8 @@ const genevaExperiences = [
     reviews: 3476,
     highlights: ['Audioguide en option', 'Vue panoramique', 'Départ du centre-ville'],
     badge: 'Coup de cœur',
-    category: 'boat'
+    category: 'boat',
+    discount: null
   },
   {
     id: 2,
@@ -50,7 +51,8 @@ const genevaExperiences = [
     reviews: 1133,
     highlights: ['Collations incluses', 'Vin local', 'Guide professionnel'],
     badge: null,
-    category: 'boat'
+    category: 'boat',
+    discount: null
   },
   {
     id: 3,
@@ -66,7 +68,8 @@ const genevaExperiences = [
     reviews: 510,
     highlights: ['Bus à toit ouvert', 'Audioguide multilingue', 'Arrêts multiples'],
     badge: null,
-    category: 'tour'
+    category: 'tour',
+    discount: null
   },
   {
     id: 4,
@@ -82,7 +85,8 @@ const genevaExperiences = [
     reviews: 1382,
     highlights: ['Transport inclus', 'Guide expert', 'Vue sur le Mont-Blanc'],
     badge: null,
-    category: 'nature'
+    category: 'nature',
+    discount: 17
   },
   {
     id: 5,
@@ -98,7 +102,8 @@ const genevaExperiences = [
     reviews: 892,
     highlights: ['Venise des Alpes', 'Temps libre', 'Transport confortable'],
     badge: 'Originals by GetYourGuide',
-    category: 'tour'
+    category: 'tour',
+    discount: null
   },
   {
     id: 6,
@@ -114,7 +119,8 @@ const genevaExperiences = [
     reviews: 234,
     highlights: ['Rafting découverte', 'Apéritif inclus', 'Équipement fourni'],
     badge: null,
-    category: 'nature'
+    category: 'nature',
+    discount: null
   },
   {
     id: 7,
@@ -130,7 +136,8 @@ const genevaExperiences = [
     reviews: 567,
     highlights: ['Vol en tandem', 'Vue Mont-Blanc', 'Pilote expérimenté'],
     badge: null,
-    category: 'nature'
+    category: 'nature',
+    discount: null
   },
   {
     id: 8,
@@ -146,17 +153,18 @@ const genevaExperiences = [
     reviews: 445,
     highlights: ['Chocolat artisanal', 'Dégustation', 'Techniques traditionnelles'],
     badge: null,
-    category: 'chocolate'
+    category: 'chocolate',
+    discount: null
   }
 ];
 
 const categories = [
-  { id: 'all', name: 'Tous', icon: '🌟' },
-  { id: 'boat', name: 'Croisières et sorties en bateau', icon: '🚢' },
-  { id: 'tour', name: 'Excursions à la journée', icon: '🚌' },
-  { id: 'chocolate', name: 'Ateliers et visites sur le chocolat', icon: '🍫' },
-  { id: 'nature', name: 'Nature et aventure', icon: '🏔️' },
-  { id: 'ski', name: 'Ski et snowboard', icon: '⛷️' }
+  { id: 'all', name: 'Tous', icon: '🌟', count: 176 },
+  { id: 'boat', name: 'Croisières et sorties en bateau', icon: '🚢', count: 24 },
+  { id: 'tour', name: 'Excursions à la journée', icon: '🚌', count: 45 },
+  { id: 'chocolate', name: 'Ateliers et visites sur le chocolat', icon: '🍫', count: 12 },
+  { id: 'nature', name: 'Nature et aventure', icon: '🏔️', count: 38 },
+  { id: 'ski', name: 'Ski et snowboard', icon: '⛷️', count: 28 }
 ];
 
 const cities = ['Genève', 'Chamonix', 'Annecy', 'Haute-Savoie', 'Montreux'];
@@ -181,23 +189,34 @@ export default function ExperiencesScreen() {
   });
 
   const ExperienceCard = ({ experience }: { experience: any }) => (
-    <View style={[styles.experienceCard, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+    <TouchableOpacity style={[styles.experienceCard, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: experience.image }} style={styles.experienceImage} />
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.6)']}
+          colors={['transparent', 'rgba(0,0,0,0.7)']}
           style={styles.imageGradient}
         />
         
         {/* Heart Icon */}
         <TouchableOpacity style={styles.heartButton}>
-          <Heart size={20} color="#FFFFFF" />
+          <Heart size={18} color="#FFFFFF" strokeWidth={2} />
         </TouchableOpacity>
         
         {/* Badge */}
         {experience.badge && (
-          <View style={[styles.badge, experience.badge === 'Coup de cœur' && styles.heartBadge]}>
-            <Text style={[styles.badgeText, { color: theme.colors.background }]}>{experience.badge}</Text>
+          <View style={[
+            styles.badge, 
+            experience.badge === 'Coup de cœur' && styles.heartBadge,
+            experience.badge.includes('Originals') && styles.originalsBadge
+          ]}>
+            <Text style={[styles.badgeText, { color: '#FFFFFF' }]}>{experience.badge}</Text>
+          </View>
+        )}
+
+        {/* Discount Badge */}
+        {experience.discount && (
+          <View style={styles.discountBadge}>
+            <Text style={styles.discountText}>-{experience.discount}%</Text>
           </View>
         )}
       </View>
@@ -207,20 +226,32 @@ export default function ExperiencesScreen() {
           {experience.title}
         </Text>
         
-        <View style={styles.detailsRow}>
-          <View style={styles.detailItem}>
-            <Clock size={14} color={theme.colors.textSecondary} />
-            <Text style={[styles.detailText, { color: theme.colors.textSecondary }]}>{experience.duration}</Text>
+        <View style={styles.metaRow}>
+          <View style={styles.durationContainer}>
+            <Clock size={14} color={theme.colors.textSecondary} strokeWidth={2} />
+            <Text style={[styles.durationText, { color: theme.colors.textSecondary }]}>{experience.duration}</Text>
           </View>
           
-          <Text style={[styles.groupSize, { color: theme.colors.textSecondary }]}>• {experience.groupSize}</Text>
+          <Text style={[styles.separator, { color: theme.colors.textSecondary }]}>•</Text>
+          
+          <Text style={[styles.groupSize, { color: theme.colors.textSecondary }]}>{experience.groupSize}</Text>
         </View>
 
         <View style={styles.ratingRow}>
           <View style={styles.ratingContainer}>
-            <Star size={14} color="#FFD700" fill="#FFD700" />
+            <View style={styles.starsContainer}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star 
+                  key={star} 
+                  size={12} 
+                  color={star <= Math.floor(experience.rating) ? "#FFD700" : "#E5E5E5"} 
+                  fill={star <= Math.floor(experience.rating) ? "#FFD700" : "transparent"}
+                  strokeWidth={1.5}
+                />
+              ))}
+            </View>
             <Text style={[styles.rating, { color: theme.colors.text }]}>{experience.rating}</Text>
-            <Text style={[styles.reviewCount, { color: theme.colors.textSecondary }]}>({experience.reviews})</Text>
+            <Text style={[styles.reviewCount, { color: theme.colors.textSecondary }]}>({experience.reviews.toLocaleString()})</Text>
           </View>
         </View>
 
@@ -237,18 +268,24 @@ export default function ExperiencesScreen() {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Header with Search */}
+      {/* Modern Header */}
       <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Genève : explorez</Text>
+        <View style={styles.headerTop}>
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Genève : explorez</Text>
+          <TouchableOpacity style={[styles.filtersButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <SlidersHorizontal size={20} color={theme.colors.primary} strokeWidth={2} />
+            <Text style={[styles.filtersButtonText, { color: theme.colors.primary }]}>Filtres</Text>
+          </TouchableOpacity>
+        </View>
         
-        {/* Search Bar */}
+        {/* Modern Search Bar */}
         <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-          <Search size={20} color={theme.colors.textSecondary} />
+          <Search size={20} color={theme.colors.textSecondary} strokeWidth={2} />
           <TextInput
             style={[styles.searchInput, { color: theme.colors.text }]}
             placeholder="Rechercher des expériences..."
@@ -258,19 +295,21 @@ export default function ExperiencesScreen() {
           />
         </View>
 
-        {/* City Selector and Date */}
+        {/* Modern Filter Pills */}
         <View style={styles.filtersRow}>
           <TouchableOpacity 
-            style={[styles.cityButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+            style={[styles.filterPill, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
             onPress={() => setShowCityDropdown(!showCityDropdown)}
           >
-            <Text style={[styles.cityButtonText, { color: theme.colors.text }]}>{selectedCity}</Text>
-            <ChevronDown size={16} color={theme.colors.textSecondary} />
+            <MapPin size={16} color={theme.colors.primary} strokeWidth={2} />
+            <Text style={[styles.filterPillText, { color: theme.colors.text }]}>{selectedCity}</Text>
+            <ChevronDown size={16} color={theme.colors.textSecondary} strokeWidth={2} />
           </TouchableOpacity>
           
-          <TouchableOpacity style={[styles.dateButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            <Text style={[styles.dateButtonText, { color: theme.colors.text }]}>Date flexible</Text>
-            <ChevronDown size={16} color={theme.colors.textSecondary} />
+          <TouchableOpacity style={[styles.filterPill, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <Calendar size={16} color={theme.colors.primary} strokeWidth={2} />
+            <Text style={[styles.filterPillText, { color: theme.colors.text }]}>Date flexible</Text>
+            <ChevronDown size={16} color={theme.colors.textSecondary} strokeWidth={2} />
           </TouchableOpacity>
           
           <TouchableOpacity style={[styles.searchButton, { backgroundColor: theme.colors.primary }]}>
@@ -281,23 +320,34 @@ export default function ExperiencesScreen() {
         {/* City Dropdown */}
         {showCityDropdown && (
           <View style={[styles.cityDropdown, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            {cities.map((city) => (
-              <TouchableOpacity
-                key={city}
-                style={styles.cityOption}
-                onPress={() => {
-                  setSelectedCity(city);
-                  setShowCityDropdown(false);
-                }}
-              >
-                <Text style={[styles.cityOptionText, { color: theme.colors.text }]}>{city}</Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView style={styles.cityList} nestedScrollEnabled>
+              {cities.map((city) => (
+                <TouchableOpacity
+                  key={city}
+                  style={[
+                    styles.cityOption,
+                    selectedCity === city && [styles.selectedCityOption, { backgroundColor: `${theme.colors.primary}15` }]
+                  ]}
+                  onPress={() => {
+                    setSelectedCity(city);
+                    setShowCityDropdown(false);
+                  }}
+                >
+                  <Text style={[
+                    styles.cityOptionText,
+                    { color: theme.colors.text },
+                    selectedCity === city && [styles.selectedCityOptionText, { color: theme.colors.primary }]
+                  ]}>
+                    {city}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         )}
       </View>
 
-      {/* Category Filters */}
+      {/* Modern Category Filters */}
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false} 
@@ -315,13 +365,22 @@ export default function ExperiencesScreen() {
             onPress={() => setSelectedCategory(category.id)}
           >
             <Text style={styles.categoryIcon}>{category.icon}</Text>
-            <Text style={[
-              styles.categoryText,
-              selectedCategory === category.id && [styles.activeCategoryText, { color: theme.colors.background }],
-              { color: theme.colors.text }
-            ]}>
-              {category.name}
-            </Text>
+            <View style={styles.categoryTextContainer}>
+              <Text style={[
+                styles.categoryText,
+                selectedCategory === category.id && [styles.activeCategoryText, { color: theme.colors.background }],
+                { color: theme.colors.text }
+              ]}>
+                {category.name}
+              </Text>
+              <Text style={[
+                styles.categoryCount,
+                selectedCategory === category.id && [styles.activeCategoryCount, { color: `${theme.colors.background}80` }],
+                { color: theme.colors.textSecondary }
+              ]}>
+                {category.count} activités
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -329,31 +388,21 @@ export default function ExperiencesScreen() {
       {/* Results Header */}
       <View style={styles.resultsHeader}>
         <Text style={[styles.resultsCount, { color: theme.colors.text }]}>
-          {filteredExperiences.length} activités trouvées
+          <Text style={{ fontWeight: '700' }}>{filteredExperiences.length}</Text> activités trouvées
         </Text>
         
-        <View style={styles.resultsActions}>
-          <TouchableOpacity 
-            style={[styles.sortButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
-            onPress={() => setSortBy(sortBy === 'recommended' ? 'price' : 'recommended')}
-          >
-            <Text style={[styles.sortText, { color: theme.colors.text }]}>
-              Trier par : {sortBy === 'recommended' ? 'Conseillé' : 'Prix'}
-            </Text>
-            <ChevronDown size={16} color={theme.colors.textSecondary} />
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.filterButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
-            onPress={() => setShowFilters(!showFilters)}
-          >
-            <Filter size={16} color={theme.colors.primary} />
-            <Text style={[styles.filterText, { color: theme.colors.primary }]}>Filtres</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={[styles.sortButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+          onPress={() => setSortBy(sortBy === 'recommended' ? 'price' : 'recommended')}
+        >
+          <Text style={[styles.sortText, { color: theme.colors.text }]}>
+            Trier par : {sortBy === 'recommended' ? 'Conseillé' : 'Prix'}
+          </Text>
+          <ChevronDown size={16} color={theme.colors.textSecondary} strokeWidth={2} />
+        </TouchableOpacity>
       </View>
 
-      {/* Experiences List */}
+      {/* Modern Experiences Grid */}
       <ScrollView 
         showsVerticalScrollIndicator={false} 
         style={[
@@ -366,7 +415,7 @@ export default function ExperiencesScreen() {
           isWeb && styles.webContentContainer
         ]}
       >
-        <View style={styles.experiencesGrid}>
+        <View style={[styles.experiencesGrid, isWeb && styles.webGrid]}>
           {filteredExperiences.map((experience) => (
             <ExperienceCard key={experience.id} experience={experience} />
           ))}
@@ -393,116 +442,146 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 20,
     ...(isWeb && {
       paddingHorizontal: 40,
-      paddingTop: 20,
-      paddingBottom: 25,
+      paddingTop: 24,
+      paddingBottom: 32,
+    }),
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    ...(isWeb && {
+      marginBottom: 28,
     }),
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 15,
+    fontSize: 28,
+    fontWeight: '700',
+    fontFamily: 'Inter',
+    letterSpacing: -0.5,
+    ...(isWeb && {
+      fontSize: 32,
+    }),
+  },
+  filtersButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 8,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 16,
+      transition: 'all 0.2s ease',
+    }),
+  },
+  filtersButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 28,
-      marginBottom: 20,
+      fontSize: 16,
     }),
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 25,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderWidth: 1,
-    marginBottom: 15,
+    marginBottom: 20,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
     ...(isWeb && {
-      paddingVertical: 16,
-      marginBottom: 20,
+      paddingVertical: 18,
+      marginBottom: 28,
+      borderRadius: 20,
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
     }),
   },
   searchInput: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 16,
     fontSize: 16,
     fontFamily: 'Inter',
+    fontWeight: '500',
     ...(isWeb && {
       outlineWidth: 0,
       outlineStyle: 'none',
+      fontSize: 18,
     }),
   },
   filtersRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 12,
     ...(isWeb && {
-      gap: 15,
+      gap: 16,
     }),
   },
-  cityButton: {
+  filterPill: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
     borderWidth: 1,
+    gap: 8,
     ...(isWeb && {
       cursor: 'pointer',
       paddingVertical: 16,
+      borderRadius: 16,
+      transition: 'all 0.2s ease',
     }),
   },
-  cityButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
+  filterPillText: {
+    fontSize: 15,
+    fontWeight: '600',
     fontFamily: 'Inter',
-    ...(isWeb && {
-      fontSize: 16,
-    }),
-  },
-  dateButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    ...(isWeb && {
-      cursor: 'pointer',
-      paddingVertical: 16,
-    }),
-  },
-  dateButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    fontFamily: 'Inter',
+    textAlign: 'center',
     ...(isWeb && {
       fontSize: 16,
     }),
   },
   searchButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
     ...(isWeb && {
       cursor: 'pointer',
       paddingVertical: 16,
-      paddingHorizontal: 24,
+      paddingHorizontal: 32,
+      borderRadius: 16,
+      boxShadow: '0 8px 24px rgba(255, 215, 0, 0.3)',
+      transition: 'all 0.2s ease',
     }),
   },
   searchButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
       fontSize: 16,
@@ -510,189 +589,226 @@ const styles = StyleSheet.create({
   },
   cityDropdown: {
     position: 'absolute',
-    top: 140,
-    left: 20,
-    right: 20,
-    borderRadius: 8,
+    top: 160,
+    left: 24,
+    right: 24,
+    borderRadius: 16,
     borderWidth: 1,
-    maxHeight: 200,
+    maxHeight: 240,
     zIndex: 1000,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 8,
     ...(isWeb && {
       left: 40,
       right: 40,
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+      borderRadius: 20,
+      boxShadow: '0 16px 48px rgba(0, 0, 0, 0.15)',
     }),
   },
+  cityList: {
+    maxHeight: 220,
+  },
   cityOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     ...(isWeb && {
       cursor: 'pointer',
+      paddingVertical: 18,
     }),
+  },
+  selectedCityOption: {
+    borderRadius: 12,
+    marginHorizontal: 8,
+    marginVertical: 2,
   },
   cityOptionText: {
     fontSize: 16,
     fontFamily: 'Inter',
+    fontWeight: '500',
+    ...(isWeb && {
+      fontSize: 18,
+    }),
+  },
+  selectedCityOptionText: {
+    fontWeight: '700',
   },
   categoryScrollView: {
-    paddingVertical: 15,
+    paddingVertical: 20,
     ...(isWeb && {
-      paddingVertical: 20,
+      paddingVertical: 28,
     }),
   },
   categoryScrollContainer: {
-    paddingHorizontal: 20,
-    gap: 10,
+    paddingHorizontal: 24,
+    gap: 12,
     ...(isWeb && {
       paddingHorizontal: 40,
-      gap: 15,
+      gap: 16,
     }),
   },
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderRadius: 16,
     borderWidth: 1,
+    minWidth: 160,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 20,
-      paddingVertical: 12,
+      paddingHorizontal: 24,
+      paddingVertical: 20,
+      borderRadius: 20,
+      minWidth: 180,
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
       transition: 'all 0.2s ease',
     }),
   },
   activeCategoryChip: {
     borderColor: 'transparent',
-  },
-  categoryIcon: {
-    fontSize: 16,
-    marginRight: 8,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
     ...(isWeb && {
-      fontSize: 18,
+      boxShadow: '0 8px 32px rgba(255, 215, 0, 0.3)',
     }),
   },
+  categoryIcon: {
+    fontSize: 20,
+    marginRight: 12,
+    ...(isWeb && {
+      fontSize: 22,
+      marginRight: 16,
+    }),
+  },
+  categoryTextContainer: {
+    flex: 1,
+  },
   categoryText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 15,
+    fontWeight: '600',
     fontFamily: 'Inter',
+    lineHeight: 20,
     ...(isWeb && {
       fontSize: 16,
+      lineHeight: 22,
     }),
   },
   activeCategoryText: {
-    fontWeight: '600',
+    fontWeight: '700',
   },
+  categoryCount: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    marginTop: 2,
+    ...(isWeb && {
+      fontSize: 13,
+      marginTop: 4,
+    }),
+  },
+  activeCategoryCount: {},
   resultsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
     ...(isWeb && {
       paddingHorizontal: 40,
-      paddingVertical: 15,
+      paddingVertical: 20,
     }),
   },
   resultsCount: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 16,
-    }),
-  },
-  resultsActions: {
-    flexDirection: 'row',
-    gap: 10,
-    ...(isWeb && {
-      gap: 15,
+      fontSize: 18,
     }),
   },
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
     borderWidth: 1,
+    gap: 8,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 16,
-      paddingVertical: 8,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 12,
+      transition: 'all 0.2s ease',
     }),
   },
   sortText: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginRight: 4,
-    fontFamily: 'Inter',
-    ...(isWeb && {
-      fontSize: 14,
-    }),
-  },
-  filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    borderWidth: 1,
-    ...(isWeb && {
-      cursor: 'pointer',
-      paddingHorizontal: 16,
-      paddingVertical: 8,
-    }),
-  },
-  filterText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
-    marginLeft: 4,
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 14,
+      fontSize: 15,
     }),
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
     ...(isWeb && {
-      paddingBottom: 40,
+      paddingTop: 32,
+      paddingBottom: 60,
     }),
   },
   experiencesGrid: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
+    gap: 20,
     ...(isWeb && {
       paddingHorizontal: 40,
+      gap: 24,
+    }),
+  },
+  webGrid: {
+    ...(isWeb && {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-      gap: '20px',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+      gap: '24px',
     }),
   },
   experienceCard: {
-    borderRadius: 12,
+    borderRadius: 20,
     overflow: 'hidden',
-    marginBottom: 20,
     borderWidth: 1,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 24,
+    elevation: 8,
     ...(isWeb && {
       cursor: 'pointer',
-      transition: 'transform 0.2s ease',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-      marginBottom: 0,
+      transition: 'all 0.3s ease',
+      borderRadius: 24,
+      boxShadow: '0 16px 48px rgba(0, 0, 0, 0.1)',
     }),
   },
   imageContainer: {
     position: 'relative',
-    height: 200,
+    height: 240,
     ...(isWeb && {
-      height: 240,
+      height: 280,
     }),
   },
   experienceImage: {
@@ -711,106 +827,154 @@ const styles = StyleSheet.create({
   },
   heartButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    top: 16,
+    right: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
+    backdropFilter: 'blur(10px)',
     ...(isWeb && {
       cursor: 'pointer',
-      top: 16,
-      right: 16,
+      top: 20,
+      right: 20,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      transition: 'all 0.2s ease',
     }),
   },
   badge: {
     position: 'absolute',
-    top: 12,
-    left: 12,
-    backgroundColor: '#FF6B6B',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    top: 16,
+    left: 16,
+    backgroundColor: '#FF4757',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
     ...(isWeb && {
-      top: 16,
-      left: 16,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
+      top: 20,
+      left: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 12,
     }),
   },
   heartBadge: {
     backgroundColor: '#FF4757',
   },
+  originalsBadge: {
+    backgroundColor: '#FF6B35',
+  },
   badgeText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 14,
+      fontSize: 13,
+    }),
+  },
+  discountBadge: {
+    position: 'absolute',
+    top: 16,
+    right: 70,
+    backgroundColor: '#00D2FF',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    ...(isWeb && {
+      top: 20,
+      right: 80,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 10,
+    }),
+  },
+  discountText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 13,
     }),
   },
   experienceInfo: {
-    padding: 16,
+    padding: 20,
     ...(isWeb && {
-      padding: 20,
+      padding: 28,
     }),
   },
   experienceTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 22,
-    marginBottom: 8,
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 24,
+    marginBottom: 12,
     fontFamily: 'Inter',
+    letterSpacing: -0.3,
     ...(isWeb && {
-      fontSize: 18,
-      lineHeight: 24,
-      marginBottom: 12,
+      fontSize: 20,
+      lineHeight: 28,
+      marginBottom: 16,
     }),
   },
-  detailsRow: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    ...(isWeb && {
-      marginBottom: 12,
-    }),
-  },
-  detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  detailText: {
-    fontSize: 14,
-    marginLeft: 4,
-    fontFamily: 'Inter',
-    ...(isWeb && {
-      fontSize: 16,
-    }),
-  },
-  groupSize: {
-    fontSize: 14,
-    marginLeft: 8,
-    fontFamily: 'Inter',
-    ...(isWeb && {
-      fontSize: 16,
-    }),
-  },
-  ratingRow: {
     marginBottom: 12,
     ...(isWeb && {
       marginBottom: 16,
     }),
   },
+  durationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  durationText: {
+    fontSize: 14,
+    fontFamily: 'Inter',
+    fontWeight: '500',
+    ...(isWeb && {
+      fontSize: 15,
+    }),
+  },
+  separator: {
+    fontSize: 14,
+    marginHorizontal: 8,
+    ...(isWeb && {
+      fontSize: 15,
+      marginHorizontal: 12,
+    }),
+  },
+  groupSize: {
+    fontSize: 14,
+    fontFamily: 'Inter',
+    fontWeight: '500',
+    ...(isWeb && {
+      fontSize: 15,
+    }),
+  },
+  ratingRow: {
+    marginBottom: 16,
+    ...(isWeb && {
+      marginBottom: 20,
+    }),
+  },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    gap: 2,
   },
   rating: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 4,
+    fontSize: 15,
+    fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
       fontSize: 16,
@@ -818,10 +982,10 @@ const styles = StyleSheet.create({
   },
   reviewCount: {
     fontSize: 14,
-    marginLeft: 4,
     fontFamily: 'Inter',
+    fontWeight: '500',
     ...(isWeb && {
-      fontSize: 16,
+      fontSize: 15,
     }),
   },
   priceRow: {
@@ -833,8 +997,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fromText: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Inter',
+    fontWeight: '500',
+    marginBottom: 4,
     ...(isWeb && {
       fontSize: 14,
     }),
@@ -843,28 +1009,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     flexWrap: 'wrap',
+    gap: 6,
   },
   originalPrice: {
-    fontSize: 14,
+    fontSize: 16,
     textDecorationLine: 'line-through',
-    marginRight: 6,
     fontFamily: 'Inter',
+    fontWeight: '500',
     ...(isWeb && {
-      fontSize: 16,
+      fontSize: 17,
     }),
   },
   price: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginRight: 4,
+    fontSize: 22,
+    fontWeight: '800',
     fontFamily: 'Inter',
+    letterSpacing: -0.5,
     ...(isWeb && {
-      fontSize: 20,
+      fontSize: 24,
     }),
   },
   priceUnit: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Inter',
+    fontWeight: '500',
     ...(isWeb && {
       fontSize: 14,
     }),
