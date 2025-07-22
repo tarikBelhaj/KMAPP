@@ -433,7 +433,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter',
     ...(isWeb && {
-      outline: 'none',
+      outlineWidth: 0,
+      outlineStyle: 'none',
     }),
   },
   filtersRow: {
