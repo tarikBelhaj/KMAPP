@@ -1,7 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Car, Hotel, MapPin, Chrome as Home } from 'lucide-react-native';
+import { Platform } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+
+const isWeb = Platform.OS === 'web';
 
 export default function TabLayout() {
   const { theme } = useTheme();
@@ -20,12 +23,26 @@ export default function TabLayout() {
           height: 90,
           paddingBottom: 30,
           paddingTop: 10,
+          ...(isWeb && {
+            height: 80,
+            paddingBottom: 20,
+            paddingTop: 15,
+            position: 'relative',
+            bottom: 0,
+          }),
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
           marginTop: 5,
+          ...(isWeb && {
+            fontSize: 14,
+            marginTop: 8,
+          }),
         },
+        tabBarItemStyle: isWeb ? {
+          cursor: 'pointer',
+        } : undefined,
       }}>
       <Tabs.Screen
         name="index"

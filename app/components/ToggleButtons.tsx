@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { Moon, Sun, Globe } from 'lucide-react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+
+const isWeb = Platform.OS === 'web';
 
 export const ToggleButtons: React.FC = () => {
   const { theme, toggleTheme, isDark } = useTheme();
@@ -58,6 +60,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     gap: 10,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingVertical: 15,
+      gap: 15,
+    }),
   },
   toggleButton: {
     flex: 1,
@@ -69,10 +76,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     gap: 8,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      borderRadius: 16,
+      transition: 'all 0.2s ease',
+    }),
   },
   toggleText: {
     fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
 });

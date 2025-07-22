@@ -4,7 +4,8 @@ import {
   StyleSheet, 
   ScrollView, 
   Image, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,6 +13,8 @@ import { Star, MapPin, Gift, Wifi, Car, Hotel } from 'lucide-react-native';
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+
+const isWeb = Platform.OS === 'web';
 
 const normalHotels = [
   {
@@ -210,7 +213,12 @@ export default function HotelsScreen() {
 
       <ScrollView 
         showsVerticalScrollIndicator={false} 
-        style={[styles.scrollView, { writingDirection: isRTL ? 'rtl' : 'ltr' }]}
+        style={[
+          styles.scrollView, 
+          { writingDirection: isRTL ? 'rtl' : 'ltr' },
+          isWeb && styles.webScrollView
+        ]}
+        contentContainerStyle={isWeb ? styles.webContentContainer : undefined}
       >
         {currentHotelData.map((hotel) => (
           <HotelCard key={hotel.id} hotel={hotel} />
@@ -224,23 +232,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111111',
+    ...(isWeb && {
+      maxWidth: 1200,
+      alignSelf: 'center',
+      width: '100%',
+    }),
+  },
+  webScrollView: {
+    width: '100%',
+  },
+  webContentContainer: {
+    minHeight: '100vh',
+    paddingBottom: 40,
   },
   header: {
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 20,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingTop: 20,
+      paddingBottom: 30,
+    }),
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 32,
+    }),
   },
   headerSubtitle: {
     fontSize: 14,
     color: '#CCCCCC',
     marginTop: 5,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   categoryContainer: {
     flexDirection: 'row',
@@ -249,6 +280,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#1A1A1A',
     borderRadius: 8,
     padding: 4,
+    ...(isWeb && {
+      marginHorizontal: 40,
+      marginBottom: 30,
+      borderRadius: 12,
+      padding: 6,
+    }),
   },
   categoryButton: {
     flex: 1,
@@ -257,6 +294,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderRadius: 6,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 16,
+      borderRadius: 8,
+      transition: 'all 0.2s ease',
+    }),
   },
   activeCategoryButton: {
     backgroundColor: '#FFD700',
@@ -267,6 +310,9 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
     marginLeft: 6,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   activeCategoryButtonText: {
     color: '#111111',
@@ -282,6 +328,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#333333',
+    ...(isWeb && {
+      marginHorizontal: 40,
+      marginBottom: 30,
+      borderRadius: 16,
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+    }),
   },
   imageContainer: {
     position: 'relative',
@@ -289,6 +343,10 @@ const styles = StyleSheet.create({
   hotelImage: {
     width: '100%',
     height: 200,
+    ...(isWeb && {
+      height: 240,
+      objectFit: 'cover',
+    }),
   },
   imageGradient: {
     position: 'absolute',
@@ -307,6 +365,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
+    ...(isWeb && {
+      top: 16,
+      left: 16,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+    }),
   },
   offerText: {
     color: '#111111',
@@ -314,15 +379,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   hotelInfo: {
     padding: 16,
+    ...(isWeb && {
+      padding: 24,
+    }),
   },
   hotelHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 12,
+    ...(isWeb && {
+      marginBottom: 16,
+    }),
   },
   hotelNameContainer: {
     flex: 1,
@@ -332,17 +406,26 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 22,
+    }),
   },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
+    ...(isWeb && {
+      marginTop: 6,
+    }),
   },
   location: {
     fontSize: 14,
     color: '#CCCCCC',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -351,6 +434,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
+    ...(isWeb && {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+    }),
   },
   rating: {
     color: '#FFD700',
@@ -358,11 +446,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   amenitiesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 16,
+    ...(isWeb && {
+      marginBottom: 20,
+    }),
   },
   amenityTag: {
     backgroundColor: '#333333',
@@ -371,12 +465,22 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginRight: 8,
     marginBottom: 4,
+    ...(isWeb && {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+      marginRight: 10,
+      marginBottom: 6,
+    }),
   },
   amenityText: {
     color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '500',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 12,
+    }),
   },
   priceContainer: {
     flexDirection: 'row',
@@ -392,23 +496,39 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFD700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 28,
+    }),
   },
   priceUnit: {
     fontSize: 14,
     color: '#CCCCCC',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   bookButton: {
     backgroundColor: '#FFD700',
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 6,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8,
+      transition: 'all 0.2s ease',
+    }),
   },
   bookButtonText: {
     color: '#111111',
     fontSize: 14,
     fontWeight: '700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
 });

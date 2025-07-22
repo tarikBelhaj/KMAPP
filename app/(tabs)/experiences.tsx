@@ -4,13 +4,16 @@ import {
   StyleSheet, 
   ScrollView, 
   Image, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin, Clock, Users, Filter } from 'lucide-react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+
+const isWeb = Platform.OS === 'web';
 
 const experiences = [
   {
@@ -145,7 +148,12 @@ export default function ExperiencesScreen() {
 
       <ScrollView 
         showsVerticalScrollIndicator={false} 
-        style={[styles.scrollView, { writingDirection: isRTL ? 'rtl' : 'ltr' }]}
+        style={[
+          styles.scrollView, 
+          { writingDirection: isRTL ? 'rtl' : 'ltr' },
+          isWeb && styles.webScrollView
+        ]}
+        contentContainerStyle={isWeb ? styles.webContentContainer : undefined}
       >
         {experiences.map((experience) => (
           <ExperienceCard key={experience.id} experience={experience} />
@@ -159,27 +167,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111111',
+    ...(isWeb && {
+      maxWidth: 1200,
+      alignSelf: 'center',
+      width: '100%',
+    }),
+  },
+  webScrollView: {
+    width: '100%',
+  },
+  webContentContainer: {
+    minHeight: '100vh',
+    paddingBottom: 40,
   },
   header: {
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 10,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingTop: 20,
+      paddingBottom: 20,
+    }),
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 32,
+    }),
   },
   headerSubtitle: {
     fontSize: 14,
     color: '#CCCCCC',
     marginTop: 5,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   filterContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingBottom: 30,
+    }),
   },
   filterButton: {
     flexDirection: 'row',
@@ -191,6 +226,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#333333',
     alignSelf: 'flex-start',
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 12,
+      transition: 'all 0.2s ease',
+    }),
   },
   filterText: {
     color: '#FFD700',
@@ -198,6 +240,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 6,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   scrollView: {
     flex: 1,
@@ -210,6 +255,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#333333',
+    ...(isWeb && {
+      marginHorizontal: 40,
+      marginBottom: 30,
+      borderRadius: 16,
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+    }),
   },
   imageContainer: {
     position: 'relative',
@@ -217,6 +270,10 @@ const styles = StyleSheet.create({
   experienceImage: {
     width: '100%',
     height: 180,
+    ...(isWeb && {
+      height: 220,
+      objectFit: 'cover',
+    }),
   },
   imageGradient: {
     position: 'absolute',
@@ -233,15 +290,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
+    ...(isWeb && {
+      top: 16,
+      right: 16,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+    }),
   },
   typeText: {
     color: '#FFD700',
     fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   experienceInfo: {
     padding: 16,
+    ...(isWeb && {
+      padding: 24,
+    }),
   },
   experienceTitle: {
     fontSize: 18,
@@ -249,11 +319,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 12,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 22,
+      marginBottom: 16,
+    }),
   },
   detailsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 12,
+    ...(isWeb && {
+      marginBottom: 16,
+    }),
   },
   detailItem: {
     flexDirection: 'row',
@@ -265,11 +342,17 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   highlightsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 16,
+    ...(isWeb && {
+      marginBottom: 20,
+    }),
   },
   highlightTag: {
     backgroundColor: '#333333',
@@ -278,12 +361,22 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginRight: 8,
     marginBottom: 4,
+    ...(isWeb && {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+      marginRight: 10,
+      marginBottom: 6,
+    }),
   },
   highlightText: {
     color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '500',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 12,
+    }),
   },
   priceContainer: {
     flexDirection: 'row',
@@ -299,23 +392,39 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFD700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 28,
+    }),
   },
   priceUnit: {
     fontSize: 14,
     color: '#CCCCCC',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   bookButton: {
     backgroundColor: '#FFD700',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 6,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 8,
+      transition: 'all 0.2s ease',
+    }),
   },
   bookButtonText: {
     color: '#111111',
     fontSize: 14,
     fontWeight: '700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
 });

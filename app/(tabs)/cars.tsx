@@ -5,7 +5,8 @@ import {
   ScrollView, 
   Image, 
   TouchableOpacity,
-  Dimensions 
+  Dimensions,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +16,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const { width } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 const ecoCarData = [
   {
@@ -218,7 +220,14 @@ export default function CarsScreen() {
         showsVerticalScrollIndicator={false} 
         style={styles.mainScrollView}
         contentContainerStyle={styles.scrollContent}
-        style={{ writingDirection: isRTL ? 'rtl' : 'ltr' }}
+        style={[
+          { writingDirection: isRTL ? 'rtl' : 'ltr' },
+          isWeb && styles.webScrollView
+        ]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          isWeb && styles.webContentContainer
+        ]}
       >
         {/* Modern Header */}
         <View style={styles.modernHeader}>
@@ -355,6 +364,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111111',
+    ...(isWeb && {
+      maxWidth: 1200,
+      alignSelf: 'center',
+      width: '100%',
+    }),
+  },
+  webScrollView: {
+    width: '100%',
+  },
+  webContentContainer: {
+    minHeight: '100vh',
+    paddingBottom: 40,
   },
   mainScrollView: {
     flex: 1,
@@ -364,6 +385,9 @@ const styles = StyleSheet.create({
   },
   modernHeader: {
     paddingBottom: 30,
+    ...(isWeb && {
+      paddingBottom: 40,
+    }),
   },
   headerGradient: {
     position: 'absolute',
@@ -375,6 +399,10 @@ const styles = StyleSheet.create({
   headerContent: {
     paddingHorizontal: 20,
     paddingTop: 20,
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingTop: 30,
+    }),
   },
   titleContainer: {
     flexDirection: 'row',
@@ -387,12 +415,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'Inter',
     marginRight: 8,
+    ...(isWeb && {
+      fontSize: 40,
+    }),
   },
   accentTitle: {
     fontSize: 32,
     fontWeight: '700',
     color: '#FFD700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 40,
+    }),
   },
   subtitle: {
     fontSize: 16,
@@ -400,6 +434,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     lineHeight: 22,
     marginBottom: 20,
+    ...(isWeb && {
+      fontSize: 18,
+      lineHeight: 26,
+    }),
   },
   statsContainer: {
     flexDirection: 'row',
@@ -410,6 +448,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 215, 0, 0.2)',
+    ...(isWeb && {
+      borderRadius: 20,
+      paddingVertical: 20,
+      paddingHorizontal: 30,
+    }),
   },
   statItem: {
     flex: 1,
@@ -420,31 +463,51 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFD700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 24,
+    }),
   },
   statLabel: {
     fontSize: 12,
     color: '#CCCCCC',
     fontFamily: 'Inter',
     marginTop: 2,
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   statDivider: {
     width: 1,
     height: 30,
     backgroundColor: 'rgba(255, 215, 0, 0.3)',
     marginHorizontal: 15,
+    ...(isWeb && {
+      height: 35,
+      marginHorizontal: 20,
+    }),
   },
   categoryScrollView: {
     marginBottom: 25,
+    ...(isWeb && {
+      marginBottom: 35,
+    }),
   },
   categoryScrollContainer: {
     paddingHorizontal: 20,
     paddingRight: 40, // Extra padding pour éviter la coupure
+    ...(isWeb && {
+      paddingHorizontal: 40,
+      paddingRight: 60,
+    }),
   },
   categoryPillsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 5,
+    ...(isWeb && {
+      gap: 15,
+    }),
   },
   categoryPill: {
     flexDirection: 'row',
@@ -458,6 +521,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 4,
     justifyContent: 'center',
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+      borderRadius: 35,
+      transition: 'all 0.2s ease',
+      marginHorizontal: 0,
+    }),
   },
   activeCategoryPill: {
     backgroundColor: '#FFD700',
@@ -467,16 +538,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    ...(isWeb && {
+      boxShadow: '0 8px 24px rgba(255, 215, 0, 0.3)',
+    }),
   },
   categoryTextContainer: {
     marginLeft: 12,
     flex: 1,
+    ...(isWeb && {
+      marginLeft: 15,
+    }),
   },
   categoryPillText: {
     fontSize: 15,
     fontWeight: '600',
     color: '#FFD700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   activeCategoryPillText: {
     color: '#111111',
@@ -486,12 +566,18 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 215, 0, 0.7)',
     fontFamily: 'Inter',
     marginTop: 2,
+    ...(isWeb && {
+      fontSize: 12,
+    }),
   },
   activeCategoryCount: {
     color: 'rgba(17, 17, 17, 0.7)',
   },
   carsContainer: {
     paddingBottom: 20,
+    ...(isWeb && {
+      paddingBottom: 40,
+    }),
   },
   carCard: {
     backgroundColor: '#1A1A1A',
@@ -506,14 +592,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
+    ...(isWeb && {
+      marginHorizontal: 40,
+      marginBottom: 30,
+      borderRadius: 24,
+      boxShadow: '0 16px 48px rgba(0, 0, 0, 0.3)',
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease',
+    }),
   },
   imageContainer: {
     position: 'relative',
     height: 220,
+    ...(isWeb && {
+      height: 260,
+    }),
   },
   carImage: {
     width: '100%',
     height: '100%',
+    ...(isWeb && {
+      objectFit: 'cover',
+    }),
   },
   imageGradient: {
     position: 'absolute',
@@ -532,12 +632,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 215, 0, 0.3)',
+    ...(isWeb && {
+      top: 20,
+      left: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 24,
+    }),
   },
   badgeText: {
     color: '#FFD700',
     fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   ratingBadge: {
     position: 'absolute',
@@ -551,6 +661,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 215, 0, 0.3)',
+    ...(isWeb && {
+      top: 20,
+      right: 20,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 24,
+    }),
   },
   ratingText: {
     color: '#FFD700',
@@ -558,15 +675,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 4,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   carInfo: {
     padding: 20,
+    ...(isWeb && {
+      padding: 30,
+    }),
   },
   carHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 16,
+    ...(isWeb && {
+      marginBottom: 20,
+    }),
   },
   carTitleContainer: {
     flex: 1,
@@ -577,11 +703,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'Inter',
     marginBottom: 4,
+    ...(isWeb && {
+      fontSize: 24,
+      marginBottom: 6,
+    }),
   },
   carModel: {
     fontSize: 15,
     color: '#CCCCCC',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 16,
+    }),
   },
   chauffeurIndicator: {
     backgroundColor: 'rgba(255, 215, 0, 0.1)',
@@ -589,12 +722,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 215, 0, 0.3)',
+    ...(isWeb && {
+      padding: 10,
+      borderRadius: 16,
+    }),
   },
   featuresContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 20,
     gap: 8,
+    ...(isWeb && {
+      marginBottom: 25,
+      gap: 10,
+    }),
   },
   featureChip: {
     backgroundColor: '#333333',
@@ -603,12 +744,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#444444',
+    ...(isWeb && {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+    }),
   },
   featureText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '500',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 14,
+    }),
   },
   carFooter: {
     flexDirection: 'row',
@@ -624,12 +773,18 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFD700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 32,
+    }),
   },
   priceUnit: {
     fontSize: 16,
     color: '#CCCCCC',
     marginLeft: 6,
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 18,
+    }),
   },
   bookButton: {
     backgroundColor: '#FFD700',
@@ -641,11 +796,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
+    ...(isWeb && {
+      cursor: 'pointer',
+      paddingVertical: 16,
+      paddingHorizontal: 30,
+      borderRadius: 20,
+      boxShadow: '0 8px 24px rgba(255, 215, 0, 0.3)',
+      transition: 'all 0.2s ease',
+    }),
   },
   bookButtonText: {
     color: '#111111',
     fontSize: 16,
     fontWeight: '700',
     fontFamily: 'Inter',
+    ...(isWeb && {
+      fontSize: 18,
+    }),
   },
 });
