@@ -199,7 +199,7 @@ export default function ExperiencesScreen() {
         
         {/* Heart Icon */}
         <TouchableOpacity style={styles.heartButton}>
-          <Heart size={18} color="#FFFFFF" strokeWidth={2} />
+          <Heart size={16} color="#FFFFFF" strokeWidth={2} />
         </TouchableOpacity>
         
         {/* Badge */}
@@ -228,7 +228,7 @@ export default function ExperiencesScreen() {
         
         <View style={styles.metaRow}>
           <View style={styles.durationContainer}>
-            <Clock size={14} color={theme.colors.textSecondary} strokeWidth={2} />
+            <Clock size={12} color={theme.colors.textSecondary} strokeWidth={2} />
             <Text style={[styles.durationText, { color: theme.colors.textSecondary }]}>{experience.duration}</Text>
           </View>
           
@@ -243,7 +243,7 @@ export default function ExperiencesScreen() {
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star 
                   key={star} 
-                  size={12} 
+                  size={10} 
                   color={star <= Math.floor(experience.rating) ? "#FFD700" : "#E5E5E5"} 
                   fill={star <= Math.floor(experience.rating) ? "#FFD700" : "transparent"}
                   strokeWidth={1.5}
@@ -273,19 +273,19 @@ export default function ExperiencesScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Modern Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
+      {/* Header */}
+      <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Genève : explorez</Text>
           <TouchableOpacity style={[styles.filtersButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            <SlidersHorizontal size={20} color={theme.colors.primary} strokeWidth={2} />
+            <SlidersHorizontal size={18} color={theme.colors.primary} strokeWidth={2} />
             <Text style={[styles.filtersButtonText, { color: theme.colors.primary }]}>Filtres</Text>
           </TouchableOpacity>
         </View>
         
-        {/* Modern Search Bar */}
+        {/* Search Bar */}
         <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-          <Search size={20} color={theme.colors.textSecondary} strokeWidth={2} />
+          <Search size={18} color={theme.colors.textSecondary} strokeWidth={2} />
           <TextInput
             style={[styles.searchInput, { color: theme.colors.text }]}
             placeholder="Rechercher des expériences..."
@@ -295,21 +295,21 @@ export default function ExperiencesScreen() {
           />
         </View>
 
-        {/* Modern Filter Pills */}
+        {/* Filter Pills */}
         <View style={styles.filtersRow}>
           <TouchableOpacity 
             style={[styles.filterPill, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
             onPress={() => setShowCityDropdown(!showCityDropdown)}
           >
-            <MapPin size={16} color={theme.colors.primary} strokeWidth={2} />
+            <MapPin size={14} color={theme.colors.primary} strokeWidth={2} />
             <Text style={[styles.filterPillText, { color: theme.colors.text }]}>{selectedCity}</Text>
-            <ChevronDown size={16} color={theme.colors.textSecondary} strokeWidth={2} />
+            <ChevronDown size={14} color={theme.colors.textSecondary} strokeWidth={2} />
           </TouchableOpacity>
           
           <TouchableOpacity style={[styles.filterPill, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            <Calendar size={16} color={theme.colors.primary} strokeWidth={2} />
+            <Calendar size={14} color={theme.colors.primary} strokeWidth={2} />
             <Text style={[styles.filterPillText, { color: theme.colors.text }]}>Date flexible</Text>
-            <ChevronDown size={16} color={theme.colors.textSecondary} strokeWidth={2} />
+            <ChevronDown size={14} color={theme.colors.textSecondary} strokeWidth={2} />
           </TouchableOpacity>
           
           <TouchableOpacity style={[styles.searchButton, { backgroundColor: theme.colors.primary }]}>
@@ -347,7 +347,7 @@ export default function ExperiencesScreen() {
         )}
       </View>
 
-      {/* Modern Category Filters */}
+      {/* Category Filters */}
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false} 
@@ -386,7 +386,7 @@ export default function ExperiencesScreen() {
       </ScrollView>
 
       {/* Results Header */}
-      <View style={styles.resultsHeader}>
+      <View style={[styles.resultsHeader, { borderBottomColor: theme.colors.border }]}>
         <Text style={[styles.resultsCount, { color: theme.colors.text }]}>
           <Text style={{ fontWeight: '700' }}>{filteredExperiences.length}</Text> activités trouvées
         </Text>
@@ -398,11 +398,11 @@ export default function ExperiencesScreen() {
           <Text style={[styles.sortText, { color: theme.colors.text }]}>
             Trier par : {sortBy === 'recommended' ? 'Conseillé' : 'Prix'}
           </Text>
-          <ChevronDown size={16} color={theme.colors.textSecondary} strokeWidth={2} />
+          <ChevronDown size={14} color={theme.colors.textSecondary} strokeWidth={2} />
         </TouchableOpacity>
       </View>
 
-      {/* Modern Experiences Grid */}
+      {/* Experiences List */}
       <ScrollView 
         showsVerticalScrollIndicator={false} 
         style={[
@@ -415,7 +415,7 @@ export default function ExperiencesScreen() {
           isWeb && styles.webContentContainer
         ]}
       >
-        <View style={[styles.experiencesGrid, isWeb && styles.webGrid]}>
+        <View style={styles.experiencesContainer}>
           {filteredExperiences.map((experience) => (
             <ExperienceCard key={experience.id} experience={experience} />
           ))}
@@ -443,30 +443,32 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 24,
+    paddingTop: 15,
+    paddingBottom: 20,
+    position: 'relative',
+    zIndex: 1000,
     ...(isWeb && {
       paddingHorizontal: 40,
-      paddingTop: 30,
-      paddingBottom: 30,
+      paddingTop: 20,
+      paddingBottom: 25,
     }),
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 15,
     ...(isWeb && {
       marginBottom: 20,
     }),
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     fontFamily: 'Inter',
     letterSpacing: -0.5,
     ...(isWeb && {
-      fontSize: 28,
+      fontSize: 26,
     }),
   },
   filtersButton: {
@@ -474,13 +476,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    gap: 8,
+    gap: 6,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
       borderRadius: 12,
       transition: 'all 0.2s ease',
     }),
@@ -496,42 +498,36 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderWidth: 1,
-    marginBottom: 16,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    marginBottom: 15,
     ...(isWeb && {
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      marginBottom: 20,
-      borderRadius: 16,
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      marginBottom: 18,
+      borderRadius: 12,
     }),
   },
   searchInput: {
     flex: 1,
-    marginLeft: 12,
-    fontSize: 16,
+    marginLeft: 10,
+    fontSize: 15,
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
       outlineWidth: 0,
       outlineStyle: 'none',
-      fontSize: 16,
-      marginLeft: 16,
+      fontSize: 15,
+      marginLeft: 12,
     }),
   },
   filtersRow: {
     flexDirection: 'row',
     gap: 8,
     ...(isWeb && {
-      gap: 12,
+      gap: 10,
     }),
   },
   filterPill: {
@@ -539,186 +535,170 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
     borderWidth: 1,
-    gap: 8,
+    gap: 6,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
       borderRadius: 12,
       transition: 'all 0.2s ease',
     }),
   },
   filterPillText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     fontFamily: 'Inter',
     flex: 1,
     textAlign: 'center',
     ...(isWeb && {
-      fontSize: 15,
+      fontSize: 14,
     }),
   },
   searchButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingVertical: 12,
-      paddingHorizontal: 24,
+      paddingVertical: 10,
+      paddingHorizontal: 18,
       borderRadius: 12,
-      boxShadow: '0 8px 24px rgba(255, 215, 0, 0.3)',
       transition: 'all 0.2s ease',
     }),
   },
   searchButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 15,
+      fontSize: 14,
     }),
   },
   cityDropdown: {
     position: 'absolute',
-    top: 140,
+    top: 120,
     left: 20,
     right: 20,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    maxHeight: 200,
-    zIndex: 1000,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 8,
+    maxHeight: 180,
+    zIndex: 1001,
+    elevation: 1001,
     ...(isWeb && {
       left: 40,
       right: 40,
-      top: 150,
-      borderRadius: 16,
-      boxShadow: '0 16px 48px rgba(0, 0, 0, 0.15)',
+      top: 130,
+      borderRadius: 12,
+      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
     }),
   },
   cityList: {
-    maxHeight: 180,
+    maxHeight: 160,
   },
   cityOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 20,
-      paddingVertical: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
     }),
   },
   selectedCityOption: {
-    borderRadius: 8,
+    borderRadius: 6,
     marginHorizontal: 4,
     marginVertical: 2,
   },
   cityOptionText: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
-      fontSize: 16,
+      fontSize: 15,
     }),
   },
   selectedCityOptionText: {
     fontWeight: '700',
   },
   categoryScrollView: {
-    paddingVertical: 16,
+    paddingVertical: 12,
     ...(isWeb && {
-      paddingVertical: 20,
+      paddingVertical: 15,
     }),
   },
   categoryScrollContainer: {
     paddingHorizontal: 20,
-    gap: 10,
+    gap: 8,
     ...(isWeb && {
       paddingHorizontal: 40,
-      gap: 12,
+      gap: 10,
     }),
   },
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    minWidth: 140,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    minWidth: 120,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      borderRadius: 16,
-      minWidth: 160,
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.05)',
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderRadius: 12,
+      minWidth: 140,
       transition: 'all 0.2s ease',
     }),
   },
   activeCategoryChip: {
     borderColor: 'transparent',
     shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowRadius: 8,
+    elevation: 4,
     ...(isWeb && {
-      boxShadow: '0 8px 32px rgba(255, 215, 0, 0.3)',
+      boxShadow: '0 4px 16px rgba(255, 215, 0, 0.3)',
     }),
   },
   categoryIcon: {
-    fontSize: 18,
-    marginRight: 8,
+    fontSize: 16,
+    marginRight: 6,
     ...(isWeb && {
-      fontSize: 20,
-      marginRight: 12,
+      fontSize: 18,
+      marginRight: 8,
     }),
   },
   categoryTextContainer: {
     flex: 1,
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Inter',
-    lineHeight: 18,
+    lineHeight: 16,
     ...(isWeb && {
-      fontSize: 15,
-      lineHeight: 20,
+      fontSize: 13,
+      lineHeight: 18,
     }),
   },
   activeCategoryText: {
     fontWeight: '700',
   },
   categoryCount: {
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: 'Inter',
-    marginTop: 2,
+    marginTop: 1,
     ...(isWeb && {
-      fontSize: 12,
-      marginTop: 3,
+      fontSize: 11,
+      marginTop: 2,
     }),
   },
   activeCategoryCount: {},
@@ -727,93 +707,85 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
     ...(isWeb && {
       paddingHorizontal: 40,
-      paddingVertical: 16,
+      paddingVertical: 12,
     }),
   },
   resultsCount: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 16,
+      fontSize: 15,
     }),
   },
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    gap: 8,
+    gap: 6,
     ...(isWeb && {
       cursor: 'pointer',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
       borderRadius: 10,
       transition: 'all 0.2s ease',
     }),
   },
   sortText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 14,
+      fontSize: 13,
     }),
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 16,
-    paddingBottom: 30,
+    paddingTop: 12,
+    paddingBottom: 25,
     ...(isWeb && {
-      paddingTop: 20,
-      paddingBottom: 40,
+      paddingTop: 15,
+      paddingBottom: 35,
     }),
   },
-  experiencesGrid: {
+  experiencesContainer: {
     paddingHorizontal: 20,
-    gap: 16,
+    gap: 12,
     ...(isWeb && {
       paddingHorizontal: 40,
-      gap: 20,
-    }),
-  },
-  webGrid: {
-    ...(isWeb && {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-      gap: '20px',
+      gap: 15,
     }),
   },
   experienceCard: {
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
     borderWidth: 1,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 8 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 24,
-    elevation: 8,
+    shadowRadius: 12,
+    elevation: 4,
     ...(isWeb && {
       cursor: 'pointer',
       transition: 'all 0.3s ease',
-      borderRadius: 20,
-      boxShadow: '0 16px 48px rgba(0, 0, 0, 0.1)',
+      borderRadius: 16,
+      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
     }),
   },
   imageContainer: {
     position: 'relative',
-    height: 200,
+    height: 160,
     ...(isWeb && {
-      height: 240,
+      height: 180,
     }),
   },
   experienceImage: {
@@ -832,39 +804,38 @@ const styles = StyleSheet.create({
   },
   heartButton: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    top: 10,
+    right: 10,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    backdropFilter: 'blur(10px)',
     ...(isWeb && {
       cursor: 'pointer',
-      top: 16,
-      right: 16,
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      top: 12,
+      right: 12,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
       transition: 'all 0.2s ease',
     }),
   },
   badge: {
     position: 'absolute',
-    top: 12,
-    left: 12,
+    top: 10,
+    left: 10,
     backgroundColor: '#FF4757',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 5,
     ...(isWeb && {
-      top: 16,
-      left: 16,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 8,
+      top: 12,
+      left: 12,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 6,
     }),
   },
   heartBadge: {
@@ -874,123 +845,123 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6B35',
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 12,
+      fontSize: 11,
     }),
   },
   discountBadge: {
     position: 'absolute',
-    top: 12,
-    right: 60,
+    top: 10,
+    right: 50,
     backgroundColor: '#00D2FF',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
     borderRadius: 4,
     ...(isWeb && {
-      top: 16,
-      right: 70,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
+      top: 12,
+      right: 55,
+      paddingHorizontal: 6,
+      paddingVertical: 3,
+      borderRadius: 5,
     }),
   },
   discountText: {
     color: '#FFFFFF',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 12,
+      fontSize: 11,
     }),
   },
   experienceInfo: {
-    padding: 16,
+    padding: 12,
     ...(isWeb && {
-      padding: 20,
+      padding: 16,
     }),
   },
   experienceTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
-    lineHeight: 22,
-    marginBottom: 10,
+    lineHeight: 18,
+    marginBottom: 8,
     fontFamily: 'Inter',
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
     ...(isWeb && {
-      fontSize: 18,
-      lineHeight: 24,
-      marginBottom: 12,
+      fontSize: 16,
+      lineHeight: 20,
+      marginBottom: 10,
     }),
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
     ...(isWeb && {
-      marginBottom: 12,
+      marginBottom: 10,
     }),
   },
   durationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
   },
   durationText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
-      fontSize: 14,
+      fontSize: 13,
     }),
   },
   separator: {
-    fontSize: 13,
-    marginHorizontal: 6,
+    fontSize: 12,
+    marginHorizontal: 5,
     ...(isWeb && {
-      fontSize: 14,
-      marginHorizontal: 8,
+      fontSize: 13,
+      marginHorizontal: 6,
     }),
   },
   groupSize: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
-      fontSize: 14,
+      fontSize: 13,
     }),
   },
   ratingRow: {
-    marginBottom: 12,
+    marginBottom: 10,
     ...(isWeb && {
-      marginBottom: 16,
+      marginBottom: 12,
     }),
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
   },
   starsContainer: {
     flexDirection: 'row',
-    gap: 2,
+    gap: 1,
   },
   rating: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
     fontFamily: 'Inter',
     ...(isWeb && {
-      fontSize: 15,
+      fontSize: 13,
     }),
   },
   reviewCount: {
-    fontSize: 13,
+    fontSize: 11,
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
-      fontSize: 14,
+      fontSize: 12,
     }),
   },
   priceRow: {
@@ -1002,45 +973,45 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fromText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Inter',
     fontWeight: '500',
-    marginBottom: 3,
+    marginBottom: 2,
     ...(isWeb && {
-      fontSize: 13,
-      marginBottom: 4,
+      fontSize: 12,
+      marginBottom: 3,
     }),
   },
   priceInfo: {
     flexDirection: 'row',
     alignItems: 'baseline',
     flexWrap: 'wrap',
-    gap: 4,
+    gap: 3,
   },
   originalPrice: {
-    fontSize: 15,
+    fontSize: 13,
     textDecorationLine: 'line-through',
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
-      fontSize: 16,
+      fontSize: 14,
     }),
   },
   price: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '800',
     fontFamily: 'Inter',
-    letterSpacing: -0.5,
+    letterSpacing: -0.3,
     ...(isWeb && {
-      fontSize: 22,
+      fontSize: 18,
     }),
   },
   priceUnit: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Inter',
     fontWeight: '500',
     ...(isWeb && {
-      fontSize: 13,
+      fontSize: 12,
     }),
   },
 });
